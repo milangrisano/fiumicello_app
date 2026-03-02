@@ -8,6 +8,7 @@ class PaymentMethod extends StatelessWidget {
   final ValueChanged<int?> onChanged;
 
   const PaymentMethod({
+    super.key, 
     required this.selectedValue,
     required this.onChanged
   });

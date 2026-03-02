@@ -6,7 +6,6 @@ import 'package:responsive_app/shared/login_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/theme_provider.dart';
 import 'package:responsive_app/provider/auth_provider.dart';
-import 'package:go_router/go_router.dart';
 
 class DesktopScaffold extends StatelessWidget {
   final String? category;
@@ -41,9 +40,6 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
           // 2. Inicia sesión en el manager local
           final auth = context.read<AuthProvider>();
           auth.login("simulated_jwt_token_from_header");
-          
-          // 3. Ahora sí, cambia de página
-          context.go('/sales');
         },
       ),
     );
@@ -51,6 +47,8 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAuthenticated = context.watch<AuthProvider>().isAuthenticated;
+
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
@@ -87,36 +85,34 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const SizedBox(width: 8),
-          TextButton(
-            onPressed: () {
-              final auth = context.read<AuthProvider>();
-              if (auth.isAuthenticated) {
-                // Primero redireccionamos a una ruta no protegida (home) 
-                // para que _appRouter ya no esté en /sales evaluando la seguridad.
-                context.go('/');
-                
-                // Despues de cambiar la ruta, entonces sí borramos la sesión
-                // de forma segura para que el redirect interceptor no brinque.
-                Future.microtask(() => auth.logout());
-              } else {
-                _openLoginModal(context);
-              }
-            },
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              backgroundColor: AppColors.surfaceDark,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: const BorderSide(color: AppColors.goldDark),
-              ),
-            ),
-            child: Text(
-              context.watch<AuthProvider>().isAuthenticated ? 'Cerrar sesión' : 'Iniciar sesión',
-              style: AppTextStyles.w500(
-                color: AppColors.goldDark,
-              ),
-            ),
-          ),
+          isAuthenticated
+              ? IconButton(
+                  onPressed: () {
+                    final auth = context.read<AuthProvider>();
+                    // Logout immediately, no redirect needed since we stay on current page
+                    auth.logout();
+                  },
+                  icon: const Icon(Icons.person, color: AppColors.goldDark, size: 28),
+                )
+              : TextButton(
+                  onPressed: () {
+                    _openLoginModal(context);
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    backgroundColor: AppColors.surfaceDark,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: const BorderSide(color: AppColors.goldDark),
+                    ),
+                  ),
+                  child: Text(
+                    'Iniciar sesión',
+                    style: AppTextStyles.w500(
+                      color: AppColors.goldDark,
+                    ),
+                  ),
+                ),
         ],
       ),
     );
