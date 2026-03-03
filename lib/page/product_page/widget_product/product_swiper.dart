@@ -22,19 +22,29 @@ class ProductSwiper extends StatefulWidget {
 
 class _ProductSwiperState extends State<ProductSwiper> {
   late final SwiperController _swiperController;
+  late final ScrollController _scrollController;
   bool _isAnimatingProgrammatically = false;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _swiperController = SwiperController();
+    _scrollController = ScrollController();
   }
 
   @override
   void didUpdateWidget(covariant ProductSwiper oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.category != oldWidget.category) {
-      _scrollToCategory(widget.category);
+      final currentSwiperCategory =
+          widget.items.isNotEmpty && _currentIndex >= 0 && _currentIndex < widget.items.length
+              ? widget.items[_currentIndex].category
+              : null;
+
+      if (widget.category != currentSwiperCategory) {
+        _scrollToCategory(widget.category);
+      }
     }
   }
 
@@ -57,6 +67,7 @@ class _ProductSwiperState extends State<ProductSwiper> {
   @override
   void dispose() {
     _swiperController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -68,11 +79,25 @@ class _ProductSwiperState extends State<ProductSwiper> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          children: [
-            Expanded(
-              child: Swiper(
-                controller: _swiperController,
+        return Theme(
+          data: Theme.of(context).copyWith(
+            scrollbarTheme: ScrollbarThemeData(
+              thumbColor: WidgetStateProperty.all(AppColors.mutedTextLight),
+            ),
+          ),
+          child: Scrollbar(
+            thumbVisibility: true,
+            thickness: 6.0,
+            radius: const Radius.circular(10),
+            controller: _scrollController,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: constraints.maxHeight,
+                    child: Swiper(
+                  controller: _swiperController,
                 itemBuilder: (BuildContext context, int index) {
                   // Instanciamos el ProductCard con proporciones personalizadas:
                   // 3/4 (flex = 3) para la imagen, 1/4 (flex = 1) para text
@@ -90,6 +115,7 @@ class _ProductSwiperState extends State<ProductSwiper> {
                 scale: 0.8,
                 loop: true,
                 onIndexChanged: (index) {
+                  _currentIndex = index;
                   if (_isAnimatingProgrammatically) return;
                   if (widget.onCategoryChange != null) {
                     final currentItemCategory = widget.items[index].category;
@@ -135,9 +161,14 @@ class _ProductSwiperState extends State<ProductSwiper> {
                 ),
               ),
             ),
-          ],
-        );
-      }
-    );
+                Container(height: 200, width: double.infinity, color: Colors.red),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  );
   }
 }
+

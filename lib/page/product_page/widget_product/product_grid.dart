@@ -221,6 +221,8 @@ class _ProductGridState extends State<ProductGrid> {
       children.add(const SizedBox(height: 32));
     });
 
+    children.add(Container(height: 200, width: double.infinity, color: Colors.red));
+
     return children;
   }
 }
