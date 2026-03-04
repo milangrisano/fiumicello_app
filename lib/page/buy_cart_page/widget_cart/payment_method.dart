@@ -7,11 +7,8 @@ class PaymentMethod extends StatelessWidget {
   final int selectedValue;
   final ValueChanged<int?> onChanged;
 
-  const PaymentMethod({
-    super.key, 
-    required this.selectedValue,
-    required this.onChanged
-  });
+  const PaymentMethod(
+      {super.key, required this.selectedValue, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -30,28 +27,35 @@ class PaymentMethod extends StatelessWidget {
             padding: const EdgeInsets.only(left: 8, bottom: 16),
             child: Text(
               LandingStrings.paymentMethodTitle,
-              style: AppTextStyles.text(fontSize: 20, color: isDark ? AppColors.goldHighlightDark : AppColors.primaryTextLight),
+              style: AppTextStyles.text(
+                  fontSize: 20,
+                  color: isDark
+                      ? AppColors.goldHighlightDark
+                      : AppColors.primaryTextLight),
             ),
           ),
           _PaymentOption(
             value: 0,
             groupValue: selectedValue,
             label: '•••• 4242',
-            iconWidget: _CardLogo('VISA', Colors.blue.shade900, isSelected: selectedValue == 0),
+            iconWidget: _CardLogo('VISA', Colors.blue.shade900,
+                isSelected: selectedValue == 0),
             onChanged: onChanged,
           ),
           _PaymentOption(
             value: 1,
             groupValue: selectedValue,
             label: 'PSE',
-            iconWidget: _CardLogo('PSE', Colors.teal, isSelected: selectedValue == 1),
+            iconWidget:
+                _CardLogo('PSE', Colors.teal, isSelected: selectedValue == 1),
             onChanged: onChanged,
           ),
           _PaymentOption(
             value: 2,
             groupValue: selectedValue,
             label: 'Nequi',
-            iconWidget: _CardLogo('nequi', Colors.purple, isSelected: selectedValue == 2),
+            iconWidget: _CardLogo('nequi', Colors.purple,
+                isSelected: selectedValue == 2),
             onChanged: onChanged,
           ),
         ],
@@ -59,8 +63,6 @@ class PaymentMethod extends StatelessWidget {
     );
   }
 }
-
-
 
 class _PaymentOption extends StatelessWidget {
   final int value;
@@ -87,12 +89,21 @@ class _PaymentOption extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              value == groupValue ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: value == groupValue ? AppColors.buttonGreenLight : AppColors.goldDark,
+              value == groupValue
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: value == groupValue
+                  ? AppColors.buttonGreenLight
+                  : AppColors.goldDark,
               size: 22,
             ),
             const SizedBox(width: 12),
-            Text(label, style: AppTextStyles.text(fontSize: 16, color: isDark ? AppColors.goldHighlightDark : AppColors.primaryTextLight)),
+            Text(label,
+                style: AppTextStyles.text(
+                    fontSize: 16,
+                    color: isDark
+                        ? AppColors.goldHighlightDark
+                        : AppColors.primaryTextLight)),
             const Spacer(),
             iconWidget,
             const SizedBox(width: 8),
@@ -124,7 +135,7 @@ class _CardLogo extends StatelessWidget {
         child: Text(
           text,
           style: AppTextStyles.bold(
-            fontSize: 12, 
+            fontSize: 12,
             color: isSelected ? Colors.white : color,
           ),
         ),

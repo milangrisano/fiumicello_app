@@ -8,32 +8,39 @@ import 'package:responsive_app/shared/create_account_modal.dart';
 class LoginModal extends StatefulWidget {
   final VoidCallback onSuccess;
   final VoidCallback? onCreateAccountTap;
-  const LoginModal({super.key, required this.onSuccess, this.onCreateAccountTap});
+  const LoginModal(
+      {super.key, required this.onSuccess, this.onCreateAccountTap});
 
   @override
   State<LoginModal> createState() => _LoginModalState();
 }
 
 class _LoginModalState extends State<LoginModal> {
-  final _formKey  = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
-  bool _obscure  = true;
-  bool _loading  = false;
+  final _passCtrl = TextEditingController();
+  bool _obscure = true;
+  bool _loading = false;
   String? _error;
 
   static const _validEmail = 'admin@admin.com';
-  static const _validPass  = '1234';
+  static const _validPass = '1234';
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     await Future.delayed(const Duration(milliseconds: 600));
     if (_emailCtrl.text.trim() == _validEmail && _passCtrl.text == _validPass) {
       widget.onSuccess();
     } else {
       if (mounted) {
-        setState(() { _loading = false; _error = LandingStrings.loginError; });
+        setState(() {
+          _loading = false;
+          _error = LandingStrings.loginError;
+        });
       }
     }
   }
@@ -72,14 +79,14 @@ class _LoginModalState extends State<LoginModal> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 // ── Fiumicello Logo ──
                 Image.asset(
-                  'assets/images/logo_fiumicello.png',
+                  isDark
+                      ? 'assets/images/logo_gold.png'
+                      : 'assets/images/logo.png',
                   width: 260,
                   fit: BoxFit.contain,
                 ),
-
 
                 // ── Welcome heading ──
                 Text(
@@ -87,7 +94,9 @@ class _LoginModalState extends State<LoginModal> {
                   style: AppTextStyles.text(
                     fontSize: 22,
                     weight: FontWeight.w600,
-                    color: isDark ? AppColors.goldLightDark : AppColors.primaryTextLight,
+                    color: isDark
+                        ? AppColors.goldLightDark
+                        : AppColors.primaryTextLight,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -97,12 +106,16 @@ class _LoginModalState extends State<LoginModal> {
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
-                  style: GoogleFonts.outfit(fontSize: 14, color: AppColors.primaryTextLight),
+                  style: GoogleFonts.outfit(
+                      fontSize: 14, color: AppColors.primaryTextLight),
                   decoration: _field(LandingStrings.emailHint),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return LandingStrings.emailError;
-                    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
-                    if (!emailRegex.hasMatch(v.trim())) return LandingStrings.invalidEmailError;
+                    if (v == null || v.trim().isEmpty)
+                      return LandingStrings.emailError;
+                    final emailRegex =
+                        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
+                    if (!emailRegex.hasMatch(v.trim()))
+                      return LandingStrings.invalidEmailError;
                     return null;
                   },
                 ),
@@ -114,19 +127,23 @@ class _LoginModalState extends State<LoginModal> {
                   obscureText: _obscure,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _submit(),
-                  style: GoogleFonts.outfit(fontSize: 14, color: AppColors.primaryTextLight),
+                  style: GoogleFonts.outfit(
+                      fontSize: 14, color: AppColors.primaryTextLight),
                   decoration: _field(LandingStrings.passwordHint).copyWith(
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        _obscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
                         color: AppColors.hintLight,
                         size: 18,
                       ),
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                   ),
-                  validator: (v) =>
-                      (v == null || v.isEmpty) ? LandingStrings.passwordError : null,
+                  validator: (v) => (v == null || v.isEmpty)
+                      ? LandingStrings.passwordError
+                      : null,
                 ),
 
                 // ── Error ──
@@ -135,7 +152,8 @@ class _LoginModalState extends State<LoginModal> {
                   Text(
                     _error!,
                     style: AppTextStyles.text(
-                      fontSize: 12, color: Colors.red.shade700,
+                      fontSize: 12,
+                      color: Colors.red.shade700,
                     ),
                   ),
                 ],
@@ -157,7 +175,8 @@ class _LoginModalState extends State<LoginModal> {
                     ),
                     child: _loading
                         ? const SizedBox(
-                            width: 20, height: 20,
+                            width: 20,
+                            height: 20,
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: Colors.white70))
                         : Text(
@@ -165,7 +184,9 @@ class _LoginModalState extends State<LoginModal> {
                             style: AppTextStyles.text(
                               fontSize: 17,
                               weight: FontWeight.w600,
-                              color: isDark ? AppColors.goldHighlightDark : Colors.white,
+                              color: isDark
+                                  ? AppColors.goldHighlightDark
+                                  : Colors.white,
                             ),
                           ),
                   ),
@@ -177,27 +198,30 @@ class _LoginModalState extends State<LoginModal> {
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
-                    onTap: widget.onCreateAccountTap ?? () {
-                      // Usar el contexto de overlay para evitar usar un contexto desmontado tras el pop
-                      final BuildContext rootContext = Navigator.of(context).overlay!.context;
-                      Navigator.of(context).pop();
-                      
-                      showDialog(
-                        context: rootContext,
-                        barrierColor: Colors.black54,
-                        builder: (_) => CreateAccountModal(
-                          onSuccess: widget.onSuccess,
-                          onLoginTap: () {
-                             Navigator.of(rootContext).pop();
-                             showDialog(
-                               context: rootContext,
-                               barrierColor: Colors.black54,
-                               builder: (_) => LoginModal(onSuccess: widget.onSuccess),
-                             );
-                          },
-                        ),
-                      );
-                    },
+                    onTap: widget.onCreateAccountTap ??
+                        () {
+                          // Usar el contexto de overlay para evitar usar un contexto desmontado tras el pop
+                          final BuildContext rootContext =
+                              Navigator.of(context).overlay!.context;
+                          Navigator.of(context).pop();
+
+                          showDialog(
+                            context: rootContext,
+                            barrierColor: Colors.black54,
+                            builder: (_) => CreateAccountModal(
+                              onSuccess: widget.onSuccess,
+                              onLoginTap: () {
+                                Navigator.of(rootContext).pop();
+                                showDialog(
+                                  context: rootContext,
+                                  barrierColor: Colors.black54,
+                                  builder: (_) =>
+                                      LoginModal(onSuccess: widget.onSuccess),
+                                );
+                              },
+                            ),
+                          );
+                        },
                     child: Text(
                       LandingStrings.btnCreateAccount,
                       style: AppTextStyles.text(
@@ -218,27 +242,30 @@ class _LoginModalState extends State<LoginModal> {
   }
 
   InputDecoration _field(String hint) => InputDecoration(
-    hintText: hint,
-    hintStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.hintLight),
-    filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.goldLightDark, width: 2), // Gold, doubled width
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.goldLightDark, width: 3), // Gold, doubled width
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Colors.red.shade400, width: 2),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Colors.red.shade600, width: 3),
-    ),
-    errorStyle: GoogleFonts.outfit(fontSize: 11, color: Colors.red),
-  );
+        hintText: hint,
+        hintStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.hintLight),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+              color: AppColors.goldLightDark, width: 2), // Gold, doubled width
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+              color: AppColors.goldLightDark, width: 3), // Gold, doubled width
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 3),
+        ),
+        errorStyle: GoogleFonts.outfit(fontSize: 11, color: Colors.red),
+      );
 }

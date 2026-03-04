@@ -43,24 +43,31 @@ class ContactFooter extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: FaIcon(FontAwesomeIcons.instagram, color: iconColor, size: 32),
-                      onPressed: () => launchInternalUrl('https://instagram.com'),
+                      icon: FaIcon(FontAwesomeIcons.instagram,
+                          color: iconColor, size: 32),
+                      onPressed: () =>
+                          launchInternalUrl('https://instagram.com'),
                     ),
                     const SizedBox(width: 24),
                     IconButton(
-                      icon: FaIcon(FontAwesomeIcons.facebook, color: iconColor, size: 32),
-                      onPressed: () => launchInternalUrl('https://facebook.com'),
+                      icon: FaIcon(FontAwesomeIcons.facebook,
+                          color: iconColor, size: 32),
+                      onPressed: () =>
+                          launchInternalUrl('https://facebook.com'),
                     ),
                   ],
                 ),
                 InkWell(
-                  onTap: () => launchInternalUrl('mailto:fiumicello.co@gmail.com'),
+                  onTap: () =>
+                      launchInternalUrl('mailto:fiumicello.co@gmail.com'),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.email_outlined, color: iconColor, size: 20),
                       const SizedBox(width: 8),
-                      Text('fiumicello.co@gmail.com', style: AppTextStyles.text(color: textColor, fontSize: 14)),
+                      Text('fiumicello.co@gmail.com',
+                          style: AppTextStyles.text(
+                              color: textColor, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -70,9 +77,12 @@ class ContactFooter extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FaIcon(FontAwesomeIcons.whatsapp, color: iconColor, size: 20),
+                      FaIcon(FontAwesomeIcons.whatsapp,
+                          color: iconColor, size: 20),
                       const SizedBox(width: 8),
-                      Text('300 4499576', style: AppTextStyles.text(color: textColor, fontSize: 14)),
+                      Text('300 4499576',
+                          style: AppTextStyles.text(
+                              color: textColor, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -98,9 +108,12 @@ class ContactFooter extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FaIcon(FontAwesomeIcons.whatsapp, color: iconColor, size: 20),
+                      FaIcon(FontAwesomeIcons.whatsapp,
+                          color: iconColor, size: 20),
                       const SizedBox(width: 8),
-                      Text('321 2879920', style: AppTextStyles.text(color: textColor, fontSize: 14)),
+                      Text('321 2879920',
+                          style: AppTextStyles.text(
+                              color: textColor, fontSize: 14)),
                     ],
                   ),
                 ),
@@ -115,9 +128,12 @@ class ContactFooter extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FaIcon(FontAwesomeIcons.whatsapp, color: iconColor, size: 20),
+                      FaIcon(FontAwesomeIcons.whatsapp,
+                          color: iconColor, size: 20),
                       const SizedBox(width: 8),
-                      Text('323 9426812', style: AppTextStyles.text(color: textColor, fontSize: 14)),
+                      Text('323 9426812',
+                          style: AppTextStyles.text(
+                              color: textColor, fontSize: 14)),
                     ],
                   ),
                 ),

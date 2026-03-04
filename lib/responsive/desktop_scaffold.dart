@@ -39,7 +39,7 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
         onSuccess: () {
           // 1. Cierra el modal
           Navigator.of(context).pop();
-          
+
           // 2. Inicia sesión en el manager local
           final auth = context.read<AuthProvider>();
           auth.login("simulated_jwt_token_from_header");
@@ -51,6 +51,7 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isAuthenticated = context.watch<AuthProvider>().isAuthenticated;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -58,7 +59,7 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 110,
       titleSpacing: 24,
       automaticallyImplyLeading: false,
-      actions: [Container()], 
+      actions: [Container()],
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -74,32 +75,30 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
-                context.watch<ThemeProvider>().isDarkMode 
-                  ? Icons.light_mode_outlined 
-                  : Icons.dark_mode_outlined,
-                color: Theme.of(context).colorScheme.primary, 
-                size: 22
-              ),
+                  context.watch<ThemeProvider>().isDarkMode
+                      ? Icons.light_mode_outlined
+                      : Icons.dark_mode_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 22),
             ),
           ),
           Expanded(
             child: Image.asset(
-              'assets/images/logo.png',
+              isDark ? 'assets/images/logo_gold.png' : 'assets/images/logo.png',
               height: 90,
             ),
           ),
           const SizedBox(width: 8),
           isAuthenticated
-              ? Builder(
-                  builder: (context) {
-                    return IconButton(
-                      onPressed: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                      icon: const Icon(Icons.person, color: AppColors.goldDark, size: 28),
-                    );
-                  }
-                )
+              ? Builder(builder: (context) {
+                  return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: const Icon(Icons.person,
+                        color: AppColors.goldDark, size: 28),
+                  );
+                })
               : TextButton(
                   onPressed: () {
                     _openLoginModal(context);

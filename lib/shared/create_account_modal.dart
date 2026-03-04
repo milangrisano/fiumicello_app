@@ -12,7 +12,7 @@ class CreateAccountModal extends StatefulWidget {
   final VoidCallback onLoginTap;
 
   const CreateAccountModal({
-    super.key, 
+    super.key,
     required this.onSuccess,
     required this.onLoginTap,
   });
@@ -22,30 +22,33 @@ class CreateAccountModal extends StatefulWidget {
 }
 
 class _CreateAccountModalState extends State<CreateAccountModal> {
-  final _formKey  = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
-  
-  bool _obscurePass  = true;
+
+  bool _obscurePass = true;
   bool _obscureConfirmPass = true;
-  bool _loading  = false;
+  bool _loading = false;
   String? _error;
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     if (_passCtrl.text != _confirmPassCtrl.text) {
       if (mounted) setState(() => _error = LandingStrings.confirmPassError);
       return;
     }
 
-    setState(() { _loading = true; _error = null; });
-    
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
     // Simulate API call
     await Future.delayed(const Duration(milliseconds: 600));
-    
+
     // Suponiendo registro exitoso
     widget.onSuccess();
   }
@@ -61,6 +64,7 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -82,19 +86,20 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
           padding: const EdgeInsets.fromLTRB(36, 38, 36, 32),
           child: Form(
             key: _formKey,
-            child: SingleChildScrollView( // Added scrollview for smaller screens
+            child: SingleChildScrollView(
+              // Added scrollview for smaller screens
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-              
                   // ── Fiumicello Logo ──
                   Image.asset(
-                    'assets/images/logo_fiumicello.png',
+                    isDark
+                        ? 'assets/images/logo_gold.png'
+                        : 'assets/images/logo.png',
                     width: 260,
                     fit: BoxFit.contain,
                   ),
-              
-              
+
                   // ── Title ──
                   Text(
                     LandingStrings.createAccountTitle,
@@ -105,90 +110,107 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     ),
                   ),
                   const SizedBox(height: 24),
-              
+
                   // ── Name ──
                   TextFormField(
                     controller: _nameCtrl,
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
-                    style: GoogleFonts.outfit(fontSize: 14, color: AppColors.primaryTextLight),
+                    style: GoogleFonts.outfit(
+                        fontSize: 14, color: AppColors.primaryTextLight),
                     decoration: _field(LandingStrings.nameHint),
-                    validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Ingresa tu nombre' : null,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Ingresa tu nombre'
+                        : null,
                   ),
                   const SizedBox(height: 12),
-              
+
                   // ── Email ──
                   TextFormField(
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    style: GoogleFonts.outfit(fontSize: 14, color: AppColors.primaryTextLight),
+                    style: GoogleFonts.outfit(
+                        fontSize: 14, color: AppColors.primaryTextLight),
                     decoration: _field(LandingStrings.emailHint),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return LandingStrings.emailError;
-                      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
-                      if (!emailRegex.hasMatch(v.trim())) return LandingStrings.invalidEmailError;
+                      if (v == null || v.trim().isEmpty)
+                        return LandingStrings.emailError;
+                      final emailRegex =
+                          RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
+                      if (!emailRegex.hasMatch(v.trim()))
+                        return LandingStrings.invalidEmailError;
                       return null;
                     },
                   ),
                   const SizedBox(height: 12),
-              
+
                   // ── Password ──
                   TextFormField(
                     controller: _passCtrl,
                     obscureText: _obscurePass,
                     textInputAction: TextInputAction.next,
-                    style: GoogleFonts.outfit(fontSize: 14, color: AppColors.primaryTextLight),
+                    style: GoogleFonts.outfit(
+                        fontSize: 14, color: AppColors.primaryTextLight),
                     decoration: _field(LandingStrings.passwordHint).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePass ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          _obscurePass
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: AppColors.hintLight,
                           size: 18,
                         ),
-                        onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                        onPressed: () =>
+                            setState(() => _obscurePass = !_obscurePass),
                       ),
                     ),
-                    validator: (v) =>
-                        (v == null || v.isEmpty) ? LandingStrings.passwordError : null,
+                    validator: (v) => (v == null || v.isEmpty)
+                        ? LandingStrings.passwordError
+                        : null,
                   ),
                   const SizedBox(height: 12),
-              
+
                   // ── Confirm Password ──
                   TextFormField(
                     controller: _confirmPassCtrl,
                     obscureText: _obscureConfirmPass,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _submit(),
-                    style: GoogleFonts.outfit(fontSize: 14, color: AppColors.primaryTextLight),
+                    style: GoogleFonts.outfit(
+                        fontSize: 14, color: AppColors.primaryTextLight),
                     decoration: _field(LandingStrings.confirmPassHint).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureConfirmPass ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          _obscureConfirmPass
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: AppColors.hintLight,
                           size: 18,
                         ),
-                        onPressed: () => setState(() => _obscureConfirmPass = !_obscureConfirmPass),
+                        onPressed: () => setState(
+                            () => _obscureConfirmPass = !_obscureConfirmPass),
                       ),
                     ),
-                    validator: (v) =>
-                        (v == null || v.isEmpty) ? LandingStrings.passwordError : null,
+                    validator: (v) => (v == null || v.isEmpty)
+                        ? LandingStrings.passwordError
+                        : null,
                   ),
-              
+
                   // ── Error ──
                   if (_error != null) ...[
                     const SizedBox(height: 10),
                     Text(
                       _error!,
                       style: AppTextStyles.text(
-                        fontSize: 12, color: Colors.red.shade700,
+                        fontSize: 12,
+                        color: Colors.red.shade700,
                       ),
                     ),
                   ],
-              
+
                   const SizedBox(height: 20),
-              
+
                   // ── Registrarse button ──
                   SizedBox(
                     width: double.infinity,
@@ -204,7 +226,8 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                       ),
                       child: _loading
                           ? const SizedBox(
-                              width: 20, height: 20,
+                              width: 20,
+                              height: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white70))
                           : Text(
@@ -217,9 +240,9 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                             ),
                     ),
                   ),
-              
+
                   const SizedBox(height: 16),
-              
+
                   // ── Already have an account? Login ──
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
@@ -257,27 +280,30 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
   }
 
   InputDecoration _field(String hint) => InputDecoration(
-    hintText: hint,
-    hintStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.hintLight),
-    filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.goldLightDark, width: 2), // Gold, doubled width
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: AppColors.goldLightDark, width: 3), // Gold, doubled width
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Colors.red.shade400, width: 2),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Colors.red.shade600, width: 3),
-    ),
-    errorStyle: GoogleFonts.outfit(fontSize: 11, color: Colors.red),
-  );
+        hintText: hint,
+        hintStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.hintLight),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+              color: AppColors.goldLightDark, width: 2), // Gold, doubled width
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+              color: AppColors.goldLightDark, width: 3), // Gold, doubled width
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 3),
+        ),
+        errorStyle: GoogleFonts.outfit(fontSize: 11, color: Colors.red),
+      );
 }

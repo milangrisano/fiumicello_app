@@ -5,6 +5,11 @@ import 'package:responsive_app/responsive/reponsive_layout.dart';
 import 'package:responsive_app/responsive/desktop_scaffold.dart';
 import 'package:responsive_app/responsive/mobile_scaffold.dart';
 import 'package:responsive_app/responsive/tablet_scaffold.dart';
+import 'package:responsive_app/page/customer_info_page/customer_info_page.dart';
+import 'package:responsive_app/page/cards_page/cards_page.dart';
+import 'package:responsive_app/page/addresses_page/addresses_page.dart';
+import 'package:responsive_app/page/orders_page/orders_page.dart';
+import 'package:responsive_app/page/orders_page/order_details_page.dart';
 
 // Definimos una clave global para el Navigator, para poder mostrar dialogos
 // desde fuera de un widget específico (o usarla en redirecciones diferidas)
@@ -31,6 +36,52 @@ final GoRouter appRouter = GoRouter(
         tabletScaffold: TabletScaffold(body: CartPage()),
         desktopScaffold: DesktopScaffold(body: CartPage()),
       ),
+    ),
+    GoRoute(
+      path: '/customer-info',
+      builder: (context, state) => const ResponsiveLayout(
+        mobileScaffold: MobileScaffold(body: CustomerInfoPage()),
+        tabletScaffold: TabletScaffold(body: CustomerInfoPage()),
+        desktopScaffold: DesktopScaffold(body: CustomerInfoPage()),
+      ),
+    ),
+    GoRoute(
+      path: '/cards',
+      builder: (context, state) => const ResponsiveLayout(
+        mobileScaffold: MobileScaffold(body: CardsPage()),
+        tabletScaffold: TabletScaffold(body: CardsPage()),
+        desktopScaffold: DesktopScaffold(body: CardsPage()),
+      ),
+    ),
+    GoRoute(
+      path: '/addresses',
+      builder: (context, state) => const ResponsiveLayout(
+        mobileScaffold: MobileScaffold(body: AddressesPage()),
+        tabletScaffold: TabletScaffold(body: AddressesPage()),
+        desktopScaffold: DesktopScaffold(body: AddressesPage()),
+      ),
+    ),
+    GoRoute(
+      path: '/orders',
+      builder: (context, state) => const ResponsiveLayout(
+        mobileScaffold: MobileScaffold(body: OrdersPage()),
+        tabletScaffold: TabletScaffold(body: OrdersPage()),
+        desktopScaffold: DesktopScaffold(body: OrdersPage()),
+      ),
+    ),
+    GoRoute(
+      path: '/orders/:id',
+      builder: (context, state) {
+        final orderId = state.pathParameters['id'] ?? '';
+        return ResponsiveLayout(
+          mobileScaffold:
+              MobileScaffold(body: OrderDetailsPage(orderId: orderId)),
+          tabletScaffold:
+              TabletScaffold(body: OrderDetailsPage(orderId: orderId)),
+          desktopScaffold:
+              DesktopScaffold(body: OrderDetailsPage(orderId: orderId)),
+        );
+      },
     ),
     GoRoute(
       path: '/:category',

@@ -68,15 +68,18 @@ class _CartPageState extends State<CartPage> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 800),
                 curve: Curves.easeInOut,
-                transform: Matrix4.translationValues(_isHoveringBack ? -5.0 : 0.0, 0.0, 0.0),
+                transform: Matrix4.translationValues(
+                    _isHoveringBack ? -5.0 : 0.0, 0.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.arrow_back_ios, size: 14, color: AppColors.goldDark),
+                    const Icon(Icons.arrow_back_ios,
+                        size: 14, color: AppColors.goldDark),
                     const SizedBox(width: 4),
                     Text(
                       LandingStrings.btnBackToProducts,
-                      style: AppTextStyles.w500(fontSize: 14, color: AppColors.goldDark),
+                      style: AppTextStyles.w500(
+                          fontSize: 14, color: AppColors.goldDark),
                     ),
                   ],
                 ),
@@ -89,7 +92,9 @@ class _CartPageState extends State<CartPage> {
             style: AppTextStyles.text(
               fontSize: 32,
               weight: FontWeight.w500,
-              color: isDark ? AppColors.goldDark : Colors.black87, // O Theme.of(context).colorScheme.onSurface
+              color: isDark
+                  ? AppColors.goldDark
+                  : Colors.black87, // O Theme.of(context).colorScheme.onSurface
             ),
           ),
           const SizedBox(height: 24),
@@ -109,11 +114,16 @@ class _CartPageState extends State<CartPage> {
                 flex: 1,
                 child: Column(
                   children: [
-                    OrderSummary(subtotal: subtotal, tax: tax, delivery: items.isEmpty ? 0 : delivery, total: total),
+                    OrderSummary(
+                        subtotal: subtotal,
+                        tax: tax,
+                        delivery: items.isEmpty ? 0 : delivery,
+                        total: total),
                     const SizedBox(height: 24),
                     PaymentMethod(
                       selectedValue: _selectedPaymentMethod,
-                      onChanged: (val) => setState(() => _selectedPaymentMethod = val ?? 0),
+                      onChanged: (val) =>
+                          setState(() => _selectedPaymentMethod = val ?? 0),
                     ),
                   ],
                 ),
@@ -125,5 +135,3 @@ class _CartPageState extends State<CartPage> {
     );
   }
 }
-
-

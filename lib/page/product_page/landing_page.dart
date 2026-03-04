@@ -11,7 +11,6 @@ import 'package:go_router/go_router.dart';
 // ─────────────────────────────────────────
 import 'package:responsive_app/content/content_landing.dart';
 
-
 // ─────────────────────────────────────────
 // Landing Page
 // ─────────────────────────────────────────
@@ -30,7 +29,8 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = widget.category ?? (landingCategories.isNotEmpty ? landingCategories.first.name : ''); 
+    _selectedCategory = widget.category ??
+        (landingCategories.isNotEmpty ? landingCategories.first.name : '');
   }
 
   @override
@@ -38,10 +38,12 @@ class _LandingPageState extends State<LandingPage> {
     super.didUpdateWidget(oldWidget);
     if (widget.category != null && widget.category != _selectedCategory) {
       if (landingCategories.any((c) => c.name == widget.category)) {
-         _selectedCategory = widget.category!;
+        _selectedCategory = widget.category!;
       }
-    } else if (widget.category == null && landingCategories.isNotEmpty && _selectedCategory != landingCategories.first.name) {
-       _selectedCategory = landingCategories.first.name;
+    } else if (widget.category == null &&
+        landingCategories.isNotEmpty &&
+        _selectedCategory != landingCategories.first.name) {
+      _selectedCategory = landingCategories.first.name;
     }
   }
 
@@ -74,25 +76,25 @@ class _LandingPageState extends State<LandingPage> {
                 },
               ),
               Expanded(
-                child: _showGrid 
-                  ? ProductGrid(
-                      category: _selectedCategory,
-                      items: _orderedItems, // Update to use ordered items
-                      onCategoryChange: (newCategory) {
-                        if (_selectedCategory != newCategory) {
-                          context.go('/$newCategory');
-                        }
-                      },
-                    )
-                  : ProductSwiper(
-                      category: _selectedCategory,
-                      items: _orderedItems, // Update to use ordered items
-                      onCategoryChange: (newCategory) {
-                        if (_selectedCategory != newCategory) {
-                          context.go('/$newCategory');
-                        }
-                      },
-                    ),
+                child: _showGrid
+                    ? ProductGrid(
+                        category: _selectedCategory,
+                        items: _orderedItems, // Update to use ordered items
+                        onCategoryChange: (newCategory) {
+                          if (_selectedCategory != newCategory) {
+                            context.go('/$newCategory');
+                          }
+                        },
+                      )
+                    : ProductSwiper(
+                        category: _selectedCategory,
+                        items: _orderedItems, // Update to use ordered items
+                        onCategoryChange: (newCategory) {
+                          if (_selectedCategory != newCategory) {
+                            context.go('/$newCategory');
+                          }
+                        },
+                      ),
               ),
             ],
           ),
@@ -108,7 +110,7 @@ class _LandingPageState extends State<LandingPage> {
                   _showGrid = !_showGrid; // Cambiar tipo de vista
                 });
               },
-              child: Icon(_showGrid ? Icons.layers : Icons.grid_view), 
+              child: Icon(_showGrid ? Icons.layers : Icons.grid_view),
             ),
           ),
           Positioned(
@@ -121,7 +123,7 @@ class _LandingPageState extends State<LandingPage> {
               onPressed: () {
                 context.go('/cart');
               },
-              child: const Icon(Icons.shopping_cart_outlined), 
+              child: const Icon(Icons.shopping_cart_outlined),
             ),
           ),
         ],

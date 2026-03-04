@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
-  // Usamos un Singleton para poder leer este estado desde app_router.dart 
+  // Usamos un Singleton para poder leer este estado desde app_router.dart
   // (que es una variable global) de forma limpia sin depender de un `context`.
   static final AuthProvider instance = AuthProvider._internal();
-  
+
   AuthProvider._internal();
 
   // Simulación de la persistencia del JWT y datos del usuario
@@ -21,7 +21,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> verifyTokenWithBackend() async {
     // TODO: Reemplazar con tu petición real (ej. HTTP POST /verify-token)
     // await Future.delayed(const Duration(milliseconds: 500));
-    
+
     // Asumimos que si hay token, el backend responde que es válido
     // En la vida real, si el backend dice "inválido", harías `logout()` o `_jwtToken = null;`
     return _jwtToken != null;

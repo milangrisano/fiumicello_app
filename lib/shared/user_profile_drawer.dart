@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:responsive_app/provider/auth_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class UserProfileDrawer extends StatelessWidget {
   const UserProfileDrawer({super.key});
@@ -21,12 +22,15 @@ class UserProfileDrawer extends StatelessWidget {
           // Header del Drawer
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 60, bottom: 20, left: 24, right: 24),
+            padding:
+                const EdgeInsets.only(top: 60, bottom: 20, left: 24, right: 24),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+              color:
+                  isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
               border: Border(
                 bottom: BorderSide(
-                  color: isDark ? AppColors.goldLightDark : AppColors.borderLight,
+                  color:
+                      isDark ? AppColors.goldLightDark : AppColors.borderLight,
                   width: 1.0,
                 ),
               ),
@@ -37,8 +41,9 @@ class UserProfileDrawer extends StatelessWidget {
                 CircleAvatar(
                   radius: 36,
                   backgroundColor: AppColors.goldDark,
-                  backgroundImage: userPhoto != null ? NetworkImage(userPhoto) : null,
-                  child: userPhoto == null 
+                  backgroundImage:
+                      userPhoto != null ? NetworkImage(userPhoto) : null,
+                  child: userPhoto == null
                       ? const Icon(Icons.person, size: 40, color: Colors.white)
                       : null,
                 ),
@@ -54,7 +59,7 @@ class UserProfileDrawer extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Opciones
           Expanded(
             child: ListView(
@@ -67,6 +72,7 @@ class UserProfileDrawer extends StatelessWidget {
                   onTap: () {
                     // Navigate to user info
                     Navigator.pop(context);
+                    context.go('/customer-info');
                   },
                 ),
                 _buildDrawerItem(
@@ -76,6 +82,7 @@ class UserProfileDrawer extends StatelessWidget {
                   onTap: () {
                     // Navigate to cards
                     Navigator.pop(context);
+                    context.go('/cards');
                   },
                 ),
                 _buildDrawerItem(
@@ -85,6 +92,7 @@ class UserProfileDrawer extends StatelessWidget {
                   onTap: () {
                     // Navigate to addresses
                     Navigator.pop(context);
+                    context.go('/addresses');
                   },
                 ),
                 _buildDrawerItem(
@@ -94,6 +102,7 @@ class UserProfileDrawer extends StatelessWidget {
                   onTap: () {
                     // Navigate to orders
                     Navigator.pop(context);
+                    context.go('/orders');
                   },
                 ),
                 const Padding(
@@ -129,7 +138,8 @@ class UserProfileDrawer extends StatelessWidget {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final defaultColor = isDark ? Colors.white : AppColors.primaryTextLight;
-    final finalIconColor = iconColor ?? (isDark ? AppColors.goldDark : AppColors.buttonGreenLight);
+    final finalIconColor =
+        iconColor ?? (isDark ? AppColors.goldDark : AppColors.buttonGreenLight);
 
     return ListTile(
       leading: Icon(icon, color: finalIconColor, size: 24),
