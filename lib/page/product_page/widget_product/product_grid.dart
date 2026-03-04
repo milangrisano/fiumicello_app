@@ -3,6 +3,7 @@ import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:responsive_app/shared/button_card.dart';
 import 'package:responsive_app/content/content_landing.dart';
+import 'package:responsive_app/page/product_page/widget_product/contact_footer.dart';
 
 // ─────────────────────────────────────────
 // Product Grid
@@ -201,7 +202,7 @@ class _ProductGridState extends State<ProductGrid> {
           crossAxisCount: 4,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: 0.72,
+          childAspectRatio: 0.74,
         ),
         itemCount: gridItems.length,
         itemBuilder: (_, i) => ProductCard(item: gridItems[i]),
@@ -221,7 +222,7 @@ class _ProductGridState extends State<ProductGrid> {
       children.add(const SizedBox(height: 32));
     });
 
-    children.add(Container(height: 200, width: double.infinity, color: Colors.red));
+    children.add(const ContactFooter());
 
     return children;
   }
@@ -268,12 +269,10 @@ class ProductCard extends StatelessWidget {
           // Imagen 
           Expanded(
             flex: imageFlex,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
                 child: Image.asset(
                   item.imageUrl,
                   fit: BoxFit.cover,

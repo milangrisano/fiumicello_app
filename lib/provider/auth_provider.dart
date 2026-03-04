@@ -7,11 +7,15 @@ class AuthProvider extends ChangeNotifier {
   
   AuthProvider._internal();
 
-  // Simulación de la persistencia del JWT
+  // Simulación de la persistencia del JWT y datos del usuario
   String? _jwtToken;
+  String? _userName;
+  String? _userPhoto;
 
   // Getter para saber si hay sesión activa (token existe)
   bool get isAuthenticated => _jwtToken != null;
+  String? get userName => _userName;
+  String? get userPhoto => _userPhoto;
 
   // Simulamos la validación del Token contra el backend
   Future<bool> verifyTokenWithBackend() async {
@@ -24,14 +28,19 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Método de prueba: Login (Simula recibir un JWT del Backend)
-  void login(String token) {
+  void login(String token, {String? name, String? photo}) {
     _jwtToken = token;
+    _userName = name ?? 'Juan Pérez';
+    // Colocamos una imagen de muestra por defecto si no le pasan
+    _userPhoto = photo ?? 'https://i.pravatar.cc/150?img=11';
     notifyListeners(); // Esto le avisa a GoRouter y a la UI que recalculen todo
   }
 
   // Método de prueba: Logout (Borra el JWT)
   void logout() {
     _jwtToken = null;
+    _userName = null;
+    _userPhoto = null;
     notifyListeners();
   }
 }

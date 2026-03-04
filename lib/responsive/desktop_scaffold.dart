@@ -3,6 +3,7 @@ import 'package:responsive_app/page/product_page/landing_page.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:responsive_app/shared/login_modal.dart';
+import 'package:responsive_app/shared/user_profile_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/theme_provider.dart';
 import 'package:responsive_app/provider/auth_provider.dart';
@@ -17,7 +18,9 @@ class DesktopScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const _DesktopAppBar(),
+      endDrawer: const UserProfileDrawer(),
       body: body ?? LandingPage(category: category),
+      endDrawerEnableOpenDragGesture: false,
     );
   }
 }
@@ -26,7 +29,7 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
   const _DesktopAppBar();
 
   @override
-  Size get preferredSize => const Size.fromHeight(80);
+  Size get preferredSize => const Size.fromHeight(110);
 
   void _openLoginModal(BuildContext context) {
     showDialog(
@@ -52,9 +55,10 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
-      toolbarHeight: 80,
+      toolbarHeight: 110,
       titleSpacing: 24,
       automaticallyImplyLeading: false,
+      actions: [Container()], 
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -80,19 +84,21 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Expanded(
             child: Image.asset(
-              'assets/images/fiumicello_hat.png',
-              height: 60,
+              'assets/images/logo.png',
+              height: 90,
             ),
           ),
           const SizedBox(width: 8),
           isAuthenticated
-              ? IconButton(
-                  onPressed: () {
-                    final auth = context.read<AuthProvider>();
-                    // Logout immediately, no redirect needed since we stay on current page
-                    auth.logout();
-                  },
-                  icon: const Icon(Icons.person, color: AppColors.goldDark, size: 28),
+              ? Builder(
+                  builder: (context) {
+                    return IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      icon: const Icon(Icons.person, color: AppColors.goldDark, size: 28),
+                    );
+                  }
                 )
               : TextButton(
                   onPressed: () {

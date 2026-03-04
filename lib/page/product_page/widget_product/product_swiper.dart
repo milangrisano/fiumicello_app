@@ -3,7 +3,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:responsive_app/content/content_landing.dart';
 import 'package:responsive_app/page/product_page/widget_product/product_grid.dart'; // Para reutilizar ProductCard
 import 'package:responsive_app/configure/app_colors.dart';
-
+import 'package:responsive_app/page/product_page/widget_product/contact_footer.dart';
 class ProductSwiper extends StatefulWidget {
   final String category;
   final List<LandingMenuItem> items;
@@ -161,7 +161,7 @@ class _ProductSwiperState extends State<ProductSwiper> {
                 ),
               ),
             ),
-                Container(height: 200, width: double.infinity, color: Colors.red),
+                const ContactFooter(),
               ],
             ),
           ),
