@@ -110,7 +110,7 @@ class _ProductGridState extends State<ProductGrid> {
 
       // Aumentamos el offset superior para asegurar que el título quede bien visible
       // debajo de las "pills" de categoría y cualquier margin superior que tenga la pantalla.
-      final topOffset = 160.0;
+      final topOffset = 180.0;
 
       final currentScrollOffset = _scrollController.offset;
       var targetOffset = currentScrollOffset + (positionInViewport - topOffset);
@@ -131,10 +131,9 @@ class _ProductGridState extends State<ProductGrid> {
 
     // Pequeño delay adicional para asegurar que el scroll ha terminado de asentar
     Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted)
-        setState(() {
-          _isScrollingProgrammatically = false;
-        });
+      if (mounted) {
+        _isScrollingProgrammatically = false;
+      }
     });
   }
 

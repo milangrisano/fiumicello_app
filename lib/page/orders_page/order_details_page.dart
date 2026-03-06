@@ -76,8 +76,7 @@ class OrderDetailsPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ...order.items
-                  .map((item) => _ProductItem(item: item, isDark: isDark))
-                  .toList(),
+                  .map((item) => _ProductItem(item: item, isDark: isDark)),
               const SizedBox(height: 32),
 
               // Shipping Address Section
@@ -324,20 +323,31 @@ class _OrderProgressTracker extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.red.withOpacity(0.1) : Colors.red.shade50,
+          color: isDark
+              ? AppColors.statusErrorBgBannerDark
+              : AppColors.statusErrorBgLight,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.red.withOpacity(0.3)),
+          border: Border.all(
+            color: isDark
+                ? AppColors.statusErrorBorderDark
+                : AppColors.statusErrorBorderLight,
+          ),
         ),
         child: Row(
           children: [
-            const Icon(Icons.cancel_outlined, color: Colors.red),
+            Icon(Icons.cancel_outlined,
+                color: isDark
+                    ? AppColors.statusErrorIconDark
+                    : AppColors.statusErrorIconLight),
             const SizedBox(width: 8),
             Text(
               'Este pedido fue cancelado',
               style: AppTextStyles.text(
                 fontSize: 14,
                 weight: FontWeight.w500,
-                color: Colors.red,
+                color: isDark
+                    ? AppColors.statusErrorTextDark
+                    : AppColors.statusErrorTextLight,
               ),
             ),
           ],
@@ -421,22 +431,37 @@ class _OrderStatusBadge extends StatelessWidget {
 
     switch (status) {
       case ContentOrders.statusDelivered:
-        bgColor = isDark ? Colors.green.withOpacity(0.2) : Colors.green.shade50;
-        textColor = isDark ? Colors.greenAccent : Colors.green.shade700;
+        bgColor = isDark
+            ? AppColors.statusSuccessBgDark
+            : AppColors.statusSuccessBgLight;
+        textColor = isDark
+            ? AppColors.statusSuccessTextDark
+            : AppColors.statusSuccessTextLight;
         break;
       case ContentOrders.statusProcessing:
       case ContentOrders.statusOnTheWay:
-        bgColor =
-            isDark ? Colors.orange.withOpacity(0.2) : Colors.orange.shade50;
-        textColor = isDark ? Colors.orangeAccent : Colors.orange.shade800;
+        bgColor = isDark
+            ? AppColors.statusPendingBgDark
+            : AppColors.statusPendingBgLight;
+        textColor = isDark
+            ? AppColors.statusPendingTextDark
+            : AppColors.statusPendingTextLight;
         break;
       case ContentOrders.statusCancelled:
-        bgColor = isDark ? Colors.red.withOpacity(0.2) : Colors.red.shade50;
-        textColor = isDark ? Colors.redAccent : Colors.red.shade700;
+        bgColor = isDark
+            ? AppColors.statusErrorBgDark
+            : AppColors.statusErrorBgLight;
+        textColor = isDark
+            ? AppColors.statusErrorTextDark
+            : AppColors.statusErrorTextLight;
         break;
       default:
-        bgColor = isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.shade200;
-        textColor = isDark ? Colors.white : Colors.black87;
+        bgColor = isDark
+            ? AppColors.statusDefaultBgDark
+            : AppColors.statusDefaultBgLight;
+        textColor = isDark
+            ? AppColors.statusDefaultTextDark
+            : AppColors.statusDefaultTextLight;
     }
 
     return Container(

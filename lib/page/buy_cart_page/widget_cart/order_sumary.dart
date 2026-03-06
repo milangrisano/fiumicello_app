@@ -9,7 +9,7 @@ class OrderSummary extends StatelessWidget {
   final double delivery;
   final double total;
 
-  const OrderSummary({
+  const OrderSummary({super.key, 
     required this.subtotal,
     required this.tax,
     required this.delivery,

@@ -36,7 +36,7 @@ class CardsPage extends StatelessWidget {
               fontSize: 16,
               weight: FontWeight.w400,
               color: isDark
-                  ? (Colors.grey[400] ?? Colors.grey)
+                  ? AppColors.secondaryTextDark
                   : AppColors.secondaryTextLight,
             ),
           ),
@@ -104,21 +104,20 @@ class _CreditCardWidget extends StatelessWidget {
     final Gradient cardGradient = card.isDefault
         ? LinearGradient(
             colors: isDark
-                ? [const Color(0xFF2C2C2C), const Color(0xFF1E1E1E)]
-                : [const Color(0xFF1A1A1A), const Color(0xFF333333)],
+                ? [AppColors.cardDefaultStartDark, AppColors.cardDefaultEndDark]
+                : [AppColors.cardDefaultStartLight, AppColors.cardDefaultEndLight],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )
         : LinearGradient(
             colors: isDark
-                ? [const Color(0xFF444444), const Color(0xFF2A2A2A)]
-                : [const Color(0xFF888888), const Color(0xFF555555)],
+                ? [AppColors.cardOtherStartDark, AppColors.cardOtherEndDark]
+                : [AppColors.cardOtherStartLight, AppColors.cardOtherEndLight],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           );
 
-    final textColor =
-        Colors.white; // Text on cards is usually white or very light
+    final textColor = AppColors.primaryTextDark; // Text on cards is usually white or very light
     final borderColor = card.isDefault
         ? (isDark ? AppColors.goldLightDark : AppColors.goldDark)
         : Colors.transparent;
@@ -136,7 +135,7 @@ class _CreditCardWidget extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: AppColors.secondaryTextLight,
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -152,7 +151,7 @@ class _CreditCardWidget extends StatelessWidget {
             children: [
               Icon(
                 Icons.credit_card,
-                color: textColor.withOpacity(0.8),
+                color: AppColors.primaryTextLight,
                 size: 32,
               ),
               Text(
@@ -188,7 +187,7 @@ class _CreditCardWidget extends StatelessWidget {
                     style: AppTextStyles.text(
                       fontSize: 10,
                       weight: FontWeight.w400,
-                      color: textColor.withOpacity(0.6),
+                      color: textColor.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -210,7 +209,7 @@ class _CreditCardWidget extends StatelessWidget {
                     style: AppTextStyles.text(
                       fontSize: 10,
                       weight: FontWeight.w400,
-                      color: textColor.withOpacity(0.6),
+                      color: textColor.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 4),

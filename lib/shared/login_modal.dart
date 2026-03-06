@@ -27,7 +27,9 @@ class _LoginModalState extends State<LoginModal> {
   static const _validPass = '1234';
 
   void _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
@@ -110,12 +112,14 @@ class _LoginModalState extends State<LoginModal> {
                       fontSize: 14, color: AppColors.primaryTextLight),
                   decoration: _field(LandingStrings.emailHint),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty)
+                    if (v == null || v.trim().isEmpty) {
                       return LandingStrings.emailError;
+                    }
                     final emailRegex =
                         RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
-                    if (!emailRegex.hasMatch(v.trim()))
+                    if (!emailRegex.hasMatch(v.trim())) {
                       return LandingStrings.invalidEmailError;
+                    }
                     return null;
                   },
                 ),

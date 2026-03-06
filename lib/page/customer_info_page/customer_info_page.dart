@@ -16,11 +16,12 @@ class CustomerInfoPage extends StatelessWidget {
     final userName = authProvider.userName ?? 'Usuario Registrado';
     final userPhoto = authProvider.userPhoto;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Back Button
           _BackButton(),
           const SizedBox(height: 24),
@@ -119,6 +120,7 @@ class CustomerInfoPage extends StatelessWidget {
             isDark: isDark,
           ),
         ],
+      ),
       ),
     );
   }

@@ -9,7 +9,7 @@ class ListTileProduct extends StatelessWidget {
   final Function(int) onDecrement;
   final Function(int) onRemove;
 
-  const ListTileProduct({
+  const ListTileProduct({super.key, 
     required this.items,
     required this.onIncrement,
     required this.onDecrement,

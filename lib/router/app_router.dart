@@ -11,6 +11,8 @@ import 'package:responsive_app/page/addresses_page/addresses_page.dart';
 import 'package:responsive_app/page/orders_page/orders_page.dart';
 import 'package:responsive_app/page/orders_page/order_details_page.dart';
 
+import 'package:responsive_app/provider/auth_provider.dart';
+
 // Definimos una clave global para el Navigator, para poder mostrar dialogos
 // desde fuera de un widget específico (o usarla en redirecciones diferidas)
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -19,7 +21,23 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: '/',
   // Le decimos a GoRouter que recalcule las rutas cuando el AuthProvider notifique cambios (Login/Logout)
-  // refreshListenable: AuthProvider.instance, // Opcional, comentar si no se usa Provider en el router directamente de momento
+  refreshListenable: AuthProvider.instance,
+  redirect: (context, state) {
+    final isAuthenticated = AuthProvider.instance.isAuthenticated;
+
+    // Rutas protegidas que requieren autenticación
+    final isProtectedRoute = state.matchedLocation.startsWith('/customer-info') ||
+        state.matchedLocation.startsWith('/cards') ||
+        state.matchedLocation.startsWith('/addresses') ||
+        state.matchedLocation.startsWith('/orders');
+
+    // Si el usuario intenta ir a una ruta protegida y no está autenticado, lo redirige a /
+    if (isProtectedRoute && !isAuthenticated) {
+      return '/';
+    }
+
+    return null; // Deja que siga con la navegación normal
+  },
   routes: [
     GoRoute(
       path: '/',

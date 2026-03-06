@@ -157,8 +157,8 @@ class _AddressCard extends StatelessWidget {
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: isDark
-                                  ? AppColors.goldLightDark.withOpacity(0.2)
-                                  : AppColors.goldDark.withOpacity(0.1),
+                                  ? AppColors.goldLightDark
+                                  : AppColors.goldDark,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

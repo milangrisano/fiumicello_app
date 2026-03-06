@@ -71,9 +71,11 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
       child: Container(
         width: 380,
         decoration: BoxDecoration(
-          color: AppColors.surfaceLight,
+          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.borderLight, width: 1.5),
+          border: Border.all(
+              color: isDark ? const Color(0xFF444444) : AppColors.borderLight,
+              width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.28),
@@ -106,7 +108,8 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     style: AppTextStyles.text(
                       fontSize: 22,
                       weight: FontWeight.w600,
-                      color: AppColors.primaryTextLight,
+                      color:
+                          isDark ? Colors.white : AppColors.primaryTextLight,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -117,11 +120,16 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     style: GoogleFonts.outfit(
-                        fontSize: 14, color: AppColors.primaryTextLight),
-                    decoration: _field(LandingStrings.nameHint),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? 'Ingresa tu nombre'
-                        : null,
+                        fontSize: 14,
+                        color:
+                            isDark ? Colors.white : AppColors.primaryTextLight),
+                    decoration: _field(LandingStrings.nameHint, isDark),
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return 'Ingresa tu nombre';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 12),
 
@@ -131,15 +139,19 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     style: GoogleFonts.outfit(
-                        fontSize: 14, color: AppColors.primaryTextLight),
-                    decoration: _field(LandingStrings.emailHint),
+                        fontSize: 14,
+                        color:
+                            isDark ? Colors.white : AppColors.primaryTextLight),
+                    decoration: _field(LandingStrings.emailHint, isDark),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty)
+                      if (v == null || v.trim().isEmpty) {
                         return LandingStrings.emailError;
+                      }
                       final emailRegex =
                           RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
-                      if (!emailRegex.hasMatch(v.trim()))
+                      if (!emailRegex.hasMatch(v.trim())) {
                         return LandingStrings.invalidEmailError;
+                      }
                       return null;
                     },
                   ),
@@ -151,14 +163,19 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     obscureText: _obscurePass,
                     textInputAction: TextInputAction.next,
                     style: GoogleFonts.outfit(
-                        fontSize: 14, color: AppColors.primaryTextLight),
-                    decoration: _field(LandingStrings.passwordHint).copyWith(
+                        fontSize: 14,
+                        color:
+                            isDark ? Colors.white : AppColors.primaryTextLight),
+                    decoration:
+                        _field(LandingStrings.passwordHint, isDark).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePass
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: AppColors.hintLight,
+                          color: isDark
+                              ? AppColors.hintDark
+                              : AppColors.hintLight,
                           size: 18,
                         ),
                         onPressed: () =>
@@ -178,14 +195,19 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _submit(),
                     style: GoogleFonts.outfit(
-                        fontSize: 14, color: AppColors.primaryTextLight),
-                    decoration: _field(LandingStrings.confirmPassHint).copyWith(
+                        fontSize: 14,
+                        color:
+                            isDark ? Colors.white : AppColors.primaryTextLight),
+                    decoration: _field(LandingStrings.confirmPassHint, isDark)
+                        .copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscureConfirmPass
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: AppColors.hintLight,
+                          color: isDark
+                              ? AppColors.hintDark
+                              : AppColors.hintLight,
                           size: 18,
                         ),
                         onPressed: () => setState(
@@ -204,7 +226,9 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                       _error!,
                       style: AppTextStyles.text(
                         fontSize: 12,
-                        color: Colors.red.shade700,
+                        color: isDark
+                            ? AppColors.statusErrorTextDark
+                            : AppColors.statusErrorTextLight,
                       ),
                     ),
                   ],
@@ -253,7 +277,9 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                           text: LandingStrings.haveAccountText1,
                           style: AppTextStyles.text(
                             fontSize: 13,
-                            color: AppColors.primaryTextLight,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.primaryTextLight,
                           ),
                           children: [
                             TextSpan(
@@ -279,11 +305,13 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
     );
   }
 
-  InputDecoration _field(String hint) => InputDecoration(
+  InputDecoration _field(String hint, bool isDark) => InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.hintLight),
+        hintStyle: GoogleFonts.outfit(
+            fontSize: 14,
+            color: isDark ? AppColors.hintDark : AppColors.hintLight),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? AppColors.backgroundDark : Colors.white,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         enabledBorder: OutlineInputBorder(
@@ -298,12 +326,24 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+          borderSide: BorderSide(
+              color: isDark
+                  ? AppColors.statusErrorBorderDark
+                  : AppColors.statusErrorBorderLight,
+              width: 2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.red.shade600, width: 3),
+          borderSide: BorderSide(
+              color: isDark
+                  ? AppColors.statusErrorBorderDark
+                  : AppColors.statusErrorBorderLight,
+              width: 3),
         ),
-        errorStyle: GoogleFonts.outfit(fontSize: 11, color: Colors.red),
+        errorStyle: GoogleFonts.outfit(
+            fontSize: 11,
+            color: isDark
+                ? AppColors.statusErrorTextDark
+                : AppColors.statusErrorTextLight),
       );
 }

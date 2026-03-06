@@ -89,7 +89,7 @@ class _OrderCard extends StatelessWidget {
         boxShadow: [
           if (!isDark)
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: AppColors.statusSuccessBgLight,
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -278,22 +278,37 @@ class _OrderStatusBadge extends StatelessWidget {
 
     switch (status) {
       case ContentOrders.statusDelivered:
-        bgColor = isDark ? Colors.green.withOpacity(0.2) : Colors.green.shade50;
-        textColor = isDark ? Colors.greenAccent : Colors.green.shade700;
+        bgColor = isDark
+            ? AppColors.statusSuccessBgDark
+            : AppColors.statusSuccessBgLight;
+        textColor = isDark
+            ? AppColors.statusSuccessTextDark
+            : AppColors.statusSuccessTextLight;
         break;
       case ContentOrders.statusProcessing:
       case ContentOrders.statusOnTheWay:
-        bgColor =
-            isDark ? Colors.orange.withOpacity(0.2) : Colors.orange.shade50;
-        textColor = isDark ? Colors.orangeAccent : Colors.orange.shade800;
+        bgColor = isDark
+            ? AppColors.statusPendingBgDark
+            : AppColors.statusPendingBgLight;
+        textColor = isDark
+            ? AppColors.statusPendingTextDark
+            : AppColors.statusPendingTextLight;
         break;
       case ContentOrders.statusCancelled:
-        bgColor = isDark ? Colors.red.withOpacity(0.2) : Colors.red.shade50;
-        textColor = isDark ? Colors.redAccent : Colors.red.shade700;
+        bgColor = isDark
+            ? AppColors.statusErrorBgDark
+            : AppColors.statusErrorBgLight;
+        textColor = isDark
+            ? AppColors.statusErrorTextDark
+            : AppColors.statusErrorTextLight;
         break;
       default:
-        bgColor = isDark ? Colors.grey.withOpacity(0.2) : Colors.grey.shade200;
-        textColor = isDark ? Colors.white : Colors.black87;
+        bgColor = isDark
+            ? AppColors.statusDefaultBgDark
+            : AppColors.statusDefaultBgLight;
+        textColor = isDark
+            ? AppColors.statusDefaultTextDark
+            : AppColors.statusDefaultTextLight;
     }
 
     return Container(

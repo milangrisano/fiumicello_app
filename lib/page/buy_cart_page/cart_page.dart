@@ -99,6 +99,7 @@ class _CartPageState extends State<CartPage> {
           ),
           const SizedBox(height: 24),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Flexible(
                 flex: 1,
