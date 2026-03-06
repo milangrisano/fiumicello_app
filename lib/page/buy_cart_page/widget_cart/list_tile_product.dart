@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_app/content/content_landing.dart';
+import 'package:responsive_app/content/content_landing.dart'; // Solo para LandingStrings
+import 'package:responsive_app/models/cart_item_model.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
 
