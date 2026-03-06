@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_app/content/content_landing.dart';
+import 'package:responsive_app/content/content_landing.dart'; // Solo para LandingStrings
+import 'package:responsive_app/models/cart_item_model.dart';
 import 'package:responsive_app/page/buy_cart_page/widget_cart/list_tile_product.dart';
 import 'package:responsive_app/page/buy_cart_page/widget_cart/order_sumary.dart';
 import 'package:responsive_app/page/buy_cart_page/widget_cart/payment_method.dart';
@@ -16,7 +17,7 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   // Estado local para los items del carrito simulados
-  List<CartItemModel> items = List.from(mockCartItems);
+  List<CartItemModel> items = [];
   int _selectedPaymentMethod = 0;
   bool _isHoveringBack = false;
 

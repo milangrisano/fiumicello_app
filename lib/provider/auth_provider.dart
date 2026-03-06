@@ -32,7 +32,7 @@ class AuthProvider extends ChangeNotifier {
     _jwtToken = token;
     _userName = name ?? 'Juan Pérez';
     // Colocamos una imagen de muestra por defecto si no le pasan
-    _userPhoto = photo ?? 'https://i.pravatar.cc/150?img=11';
+    _userPhoto = photo;
     notifyListeners(); // Esto le avisa a GoRouter y a la UI que recalculen todo
   }
 

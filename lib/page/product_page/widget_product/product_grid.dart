@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:responsive_app/shared/button_card.dart';
-import 'package:responsive_app/content/content_landing.dart';
+import 'package:responsive_app/models/landing_menu_item.dart';
+import 'package:responsive_app/content/content_landing.dart'; // Solo para LandingStrings
 import 'package:responsive_app/page/product_page/widget_product/contact_footer.dart';
 
 // ─────────────────────────────────────────
@@ -34,8 +35,20 @@ class _ProductGridState extends State<ProductGrid> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
-    for (final cat in landingCategories) {
-      _categoryKeys[cat.name] = GlobalKey();
+    
+    // Al inicializar usamos los items provistos para crear keys para las categorías disponibles
+    final availableCategories = widget.items.map((item) => item.category).toSet();
+    for (final cat in availableCategories) {
+      _categoryKeys[cat] = GlobalKey();
+    }
+
+    // Scroll inicial a la categoría seleccionada después de que el primer frame se renderice
+    if (widget.category.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _categoryKeys.containsKey(widget.category)) {
+          _scrollToCategory(widget.category);
+        }
+      });
     }
   }
 
@@ -82,8 +95,27 @@ class _ProductGridState extends State<ProductGrid> {
   @override
   void didUpdateWidget(covariant ProductGrid oldWidget) {
     super.didUpdateWidget(oldWidget);
+    
+    // Si los items cambian, actualizar las llaves de categorías
+    // pero NO borrar las existentes — solo agregar nuevas y quitar las obsoletas
+    if (widget.items != oldWidget.items) {
+      final newCategories = widget.items.map((item) => item.category).toSet();
+      // Remover llaves de categorías que ya no existen
+      _categoryKeys.removeWhere((key, _) => !newCategories.contains(key));
+      // Agregar llaves para categorías nuevas
+      for (final cat in newCategories) {
+        _categoryKeys.putIfAbsent(cat, () => GlobalKey());
+      }
+    }
+
     if (widget.category != oldWidget.category) {
-      _scrollToCategory(widget.category);
+      // Deferimos el scroll hasta después de que el frame se renderice
+      // para asegurar que las GlobalKeys estén asignadas al widget tree
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollToCategory(widget.category);
+        }
+      });
     }
   }
 
@@ -148,11 +180,15 @@ class _ProductGridState extends State<ProductGrid> {
   Widget build(BuildContext context) {
     // Agrupar siempre todos los elementos por categoría respetando el orden original
     final Map<String, List<LandingMenuItem>> groupedItems = {};
-    for (final cat in landingCategories) {
-      final catItems =
-          widget.items.where((item) => item.category == cat.name).toList();
+    
+    // Si tenemos items, creamos un set unico de sus correspondientes categorias
+    final availableCategories = widget.items.map((item) => item.category).toSet().toList();
+    
+    // Y utilizamos el set dinamico en vez del estatico
+    for (final catName in availableCategories) {
+      final catItems = widget.items.where((item) => item.category == catName).toList();
       if (catItems.isNotEmpty) {
-        groupedItems[cat.name] = catItems;
+        groupedItems[catName] = catItems;
       }
     }
 
@@ -274,20 +310,38 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  item.imageUrl,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: item.plateColor.withValues(alpha: 0.18),
-                    child: Center(
-                      child: Icon(Icons.restaurant,
-                          size: 56,
-                          color: item.plateColor.withValues(alpha: 0.85)),
-                    ),
-                  ),
-                ),
+                child: item.imageUrl.isNotEmpty
+                    ? Image.network(
+                        item.imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: item.plateColor.withValues(alpha: 0.18),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/fiumicello_hat.png',
+                              width: 60.0 * imageFlex,
+                              height: 60.0 * imageFlex,
+                              fit: BoxFit.contain,
+                              // Optional: apply color if the hat is just a silhouette, 
+                              // filtering the color to match the design (uncomment if needed)
+                              // color: item.plateColor.withValues(alpha: 0.85),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: item.plateColor.withValues(alpha: 0.18),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/fiumicello_hat.png',
+                            width: 60.0 * imageFlex,
+                            height: 60.0 * imageFlex,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
               ),
             ),
           ),
@@ -298,7 +352,9 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Nombre del producto
                   Text(
                     item.name,
                     maxLines: 2,
@@ -309,40 +365,82 @@ class ProductCard extends StatelessWidget {
                       color: isDark ? Colors.white : AppColors.primaryTextLight,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Expanded(
-                    child: Text(
-                      item.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  const Spacer(),
+                  // Descripción
+                  Text(
+                    item.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.text(
+                      fontSize: 10,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : AppColors.secondaryTextLight,
+                    ),
+                  ),
+                  const Spacer(),
+                  // Sección de precios: variantes de tamaño para pizzas, precio simple para el resto
+                  if (item.sizeVariants.isNotEmpty)
+                    _buildSizeVariants(context, isDark)
+                  else ...[
+                    Text(
+                      item.price,
                       style: AppTextStyles.text(
-                        fontSize: 10,
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.6)
-                            : AppColors.secondaryTextLight,
+                        fontSize: 14,
+                        weight: FontWeight.w700,
+                        color: isDark ? Colors.white : AppColors.primaryTextLight,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    item.price,
-                    style: AppTextStyles.text(
-                      fontSize: 14,
-                      weight: FontWeight.w700,
-                      color: isDark ? Colors.white : AppColors.primaryTextLight,
+                    const SizedBox(height: 6),
+                    ButtonCard(
+                      text: LandingStrings.btnAddToCart,
+                      onPressed: () {},
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  ButtonCard(
-                    text: LandingStrings.btnAddToCart,
-                    onPressed: () {},
-                  ),
+                  ],
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  /// Construye la sección de variantes de tamaño para pizzas
+  /// Muestra 3 columnas lado a lado: tamaño arriba, precio abajo
+  Widget _buildSizeVariants(BuildContext context, bool isDark) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: item.sizeVariants.entries.map((entry) {
+        return Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                entry.key,
+                style: AppTextStyles.text(
+                  fontSize: 10,
+                  weight: FontWeight.w500,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.7)
+                      : AppColors.secondaryTextLight,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                entry.value,
+                style: AppTextStyles.text(
+                  fontSize: 12,
+                  weight: FontWeight.w700,
+                  color: isDark ? Colors.white : AppColors.primaryTextLight,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

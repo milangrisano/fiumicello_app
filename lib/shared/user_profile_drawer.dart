@@ -118,6 +118,7 @@ class UserProfileDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context); // Close the drawer
                     context.read<AuthProvider>().logout();
+                    context.go('/');
                   },
                 ),
               ],
