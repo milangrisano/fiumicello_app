@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:responsive_app/models/product.dart';
 import 'package:responsive_app/services/products_service.dart';
 
@@ -18,7 +19,7 @@ class ProductsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    print("ProductsProvider: fetchProducts started");
+    log("ProductsProvider: fetchProducts started");
     _isLoading = true;
     _error = null;
     
@@ -28,12 +29,12 @@ class ProductsProvider extends ChangeNotifier {
 
     try {
       _products = await _service.getProducts();
-      print("ProductsProvider: Loaded \${_products.length} products successfully");
+      log("ProductsProvider: Loaded ${_products.length} products successfully");
     } catch (e) {
-      print("ProductsProvider: Error loading products -> \$e");
+      log("ProductsProvider: Error loading products -> $e");
       _error = e.toString();
     } finally {
-      print("ProductsProvider: fetchProducts finished");
+      log("ProductsProvider: fetchProducts finished");
       _isLoading = false;
       notifyListeners();
     }

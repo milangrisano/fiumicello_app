@@ -110,7 +110,7 @@ class _ProductSwiperState extends State<ProductSwiper> {
                         child: ProductCard(
                           item: widget.items[index],
                           imageFlex: 3,
-                          textFlex: 1,
+                          textFlex: 2,
                         ),
                       );
                     },

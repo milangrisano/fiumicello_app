@@ -10,7 +10,8 @@ import 'package:responsive_app/models/landing_menu_item.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/products_provider.dart';
 import 'package:responsive_app/models/product.dart';
-
+import 'package:intl/intl.dart';
+import 'package:responsive_app/shared/fiumicello_loading_indicator.dart';
 // ─────────────────────────────────────────
 // Orden fijo de categorías para pills y grid
 // ─────────────────────────────────────────
@@ -109,8 +110,10 @@ class _LandingPageState extends State<LandingPage> {
 
       // Construir el mapa de sizeVariants
       final Map<String, String> sizeVariants = {};
+      final numberFormat = NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+
       for (final v in variants) {
-        sizeVariants[v.type] = "\$${v.price.toStringAsFixed(2)}";
+        sizeVariants[v.type] = numberFormat.format(v.price).trim();
       }
 
       // Usar la primera variante como referencia para datos comunes
@@ -118,7 +121,7 @@ class _LandingPageState extends State<LandingPage> {
       items.add(LandingMenuItem(
         name: first.name,
         category: first.category,
-        price: "\$${first.price.toStringAsFixed(2)}", // Precio base (Personal)
+        price: numberFormat.format(first.price), // Precio base (Personal)
         imageUrl: first.images.isNotEmpty ? first.images.first : '',
         plateColor: AppColors.goldDark,
         description: first.description ?? "Delicioso producto de la casa Fiumicello.",
@@ -130,10 +133,12 @@ class _LandingPageState extends State<LandingPage> {
 
   /// Convierte un producto no-pizza a LandingMenuItem (sin variantes de tamaño)
   LandingMenuItem _productToMenuItem(Product p) {
+    final numberFormat = NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+
     return LandingMenuItem(
       name: p.name,
       category: p.category,
-      price: "\$${p.price.toStringAsFixed(2)}",
+      price: numberFormat.format(p.price).trim(),
       imageUrl: p.images.isNotEmpty ? p.images.first : '',
       plateColor: AppColors.goldDark,
       description: p.description ?? "Delicioso producto de la casa Fiumicello.",
@@ -169,6 +174,17 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final productsProvider = context.watch<ProductsProvider>();
+
+    if (productsProvider.isLoading) {
+      return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: const Center(
+          child: FiumicelloLoadingIndicator(size: 100.0),
+        ),
+      );
+    }
+
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Stack(

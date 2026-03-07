@@ -1,46 +1,128 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:responsive_app/models/user.dart';
+import 'package:responsive_app/services/auth_service.dart';
 
 class AuthProvider extends ChangeNotifier {
-  // Usamos un Singleton para poder leer este estado desde app_router.dart
-  // (que es una variable global) de forma limpia sin depender de un `context`.
   static final AuthProvider instance = AuthProvider._internal();
 
-  AuthProvider._internal();
+  final AuthService _authService = AuthService();
 
-  // Simulación de la persistencia del JWT y datos del usuario
+  AuthProvider._internal() {
+    _checkAuthStatus();
+  }
+
+  User? _currentUser;
   String? _jwtToken;
-  String? _userName;
-  String? _userPhoto;
+  bool _isLoading = false;
+  String? _error;
 
-  // Getter para saber si hay sesión activa (token existe)
+  User? get currentUser => _currentUser;
+  String? get token => _jwtToken;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  
   bool get isAuthenticated => _jwtToken != null;
-  String? get userName => _userName;
-  String? get userPhoto => _userPhoto;
+  String? get userName => _currentUser?.name;
+  String? get userPhoto => null; // To-Do: add to User model if backend supports it
 
-  // Simulamos la validación del Token contra el backend
-  Future<bool> verifyTokenWithBackend() async {
-    // TODO: Reemplazar con tu petición real (ej. HTTP POST /verify-token)
-    // await Future.delayed(const Duration(milliseconds: 500));
-
-    // Asumimos que si hay token, el backend responde que es válido
-    // En la vida real, si el backend dice "inválido", harías `logout()` o `_jwtToken = null;`
-    return _jwtToken != null;
-  }
-
-  // Método de prueba: Login (Simula recibir un JWT del Backend)
-  void login(String token, {String? name, String? photo}) {
-    _jwtToken = token;
-    _userName = name ?? 'Juan Pérez';
-    // Colocamos una imagen de muestra por defecto si no le pasan
-    _userPhoto = photo;
-    notifyListeners(); // Esto le avisa a GoRouter y a la UI que recalculen todo
-  }
-
-  // Método de prueba: Logout (Borra el JWT)
-  void logout() {
-    _jwtToken = null;
-    _userName = null;
-    _userPhoto = null;
+  Future<void> _checkAuthStatus() async {
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedToken = prefs.getString('token');
+      final savedUserJson = prefs.getString('user');
+
+      if (savedToken != null && savedUserJson != null) {
+        _jwtToken = savedToken;
+        _currentUser = User.fromJson(json.decode(savedUserJson));
+        log('AuthProvider: Sesión recuperada para ${_currentUser!.email}');
+      }
+    } catch (e) {
+      log('AuthProvider: Error al recuperar la sesión -> $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> login(String email, String password) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _authService.login(email, password);
+      _currentUser = response.user;
+      _jwtToken = response.token;
+      
+      await _persistSession();
+      
+      log('AuthProvider: Login exitoso para ${_currentUser!.email}');
+      return true;
+    } catch (e) {
+      log('AuthProvider: Login falló -> $e');
+      _error = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> register(String name, String email, String password) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _authService.register(name, email, password);
+      _currentUser = response.user;
+      _jwtToken = response.token;
+      
+      await _persistSession();
+      
+      log('AuthProvider: Registro exitoso para ${_currentUser!.email}');
+      return true;
+    } catch (e) {
+      log('AuthProvider: Registro falló -> $e');
+      _error = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> logout() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
+      await prefs.remove('user');
+      
+      _currentUser = null;
+      _jwtToken = null;
+      
+      log('AuthProvider: Logout exitoso');
+    } catch (e) {
+      log('AuthProvider: Error durante logout -> $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _persistSession() async {
+    if (_jwtToken == null || _currentUser == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', _jwtToken!);
+    await prefs.setString('user', json.encode(_currentUser!.toJson()));
   }
 }

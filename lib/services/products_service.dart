@@ -7,7 +7,7 @@ class ProductsService {
 
   Future<List<Product>> getProducts() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/products'));
+      final response = await http.get(Uri.parse('$baseUrl/api/products'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

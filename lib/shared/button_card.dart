@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
+import 'package:responsive_app/shared/fiumicello_loading_indicator.dart';
 
 class ButtonCard extends StatelessWidget {
   final String text;
@@ -47,13 +48,10 @@ class ButtonCard extends StatelessWidget {
           padding: EdgeInsets.zero,
         ),
         child: isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white70,
-                ),
+            ? SizedBox(
+                width: height * 0.7, // Mantiene proporción con la altura del botón
+                height: height * 0.7,
+                child: const FiumicelloLoadingIndicator(size: 20),
               )
             : Text(
                 text,

@@ -37,12 +37,8 @@ class _DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
       barrierColor: Colors.black54,
       builder: (_) => LoginModal(
         onSuccess: () {
-          // 1. Cierra el modal
+          // 1. Cierra el modal, el LoginModal ya se encarga de actualizar el state global
           Navigator.of(context).pop();
-
-          // 2. Inicia sesión en el manager local
-          final auth = context.read<AuthProvider>();
-          auth.login("simulated_jwt_token_from_header");
         },
       ),
     );

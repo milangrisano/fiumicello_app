@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/content/content_landing.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
+import 'package:responsive_app/shared/fiumicello_loading_indicator.dart';
+import 'package:responsive_app/provider/auth_provider.dart';
 import 'package:responsive_app/shared/create_account_modal.dart';
 
 class LoginModal extends StatefulWidget {
@@ -23,9 +25,6 @@ class _LoginModalState extends State<LoginModal> {
   bool _loading = false;
   String? _error;
 
-  static const _validEmail = 'admin@admin.com';
-  static const _validPass = '1234';
-
   void _submit() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -34,14 +33,20 @@ class _LoginModalState extends State<LoginModal> {
       _loading = true;
       _error = null;
     });
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (_emailCtrl.text.trim() == _validEmail && _passCtrl.text == _validPass) {
-      widget.onSuccess();
-    } else {
-      if (mounted) {
+
+    final success = await AuthProvider.instance.login(
+      _emailCtrl.text.trim(),
+      _passCtrl.text,
+    );
+
+    if (mounted) {
+      if (success) {
+        widget.onSuccess();
+      } else {
         setState(() {
           _loading = false;
-          _error = LandingStrings.loginError;
+          // Mostramos el texto de error del backend o el genérico
+          _error = AuthProvider.instance.error ?? LandingStrings.loginError;
         });
       }
     }
@@ -179,10 +184,9 @@ class _LoginModalState extends State<LoginModal> {
                     ),
                     child: _loading
                         ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white70))
+                            width: 32,
+                            height: 32,
+                            child: FiumicelloLoadingIndicator(size: 26))
                         : Text(
                             LandingStrings.btnLogin,
                             style: AppTextStyles.text(

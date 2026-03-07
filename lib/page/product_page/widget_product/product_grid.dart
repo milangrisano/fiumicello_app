@@ -178,6 +178,10 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.items.isEmpty) {
+      return const Center(child: Text("No items available"));
+    }
+
     // Agrupar siempre todos los elementos por categoría respetando el orden original
     final Map<String, List<LandingMenuItem>> groupedItems = {};
     
@@ -239,7 +243,7 @@ class _ProductGridState extends State<ProductGrid> {
           crossAxisCount: 4,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: 0.74,
+          childAspectRatio: 0.83, // Aumentado el espacio vertical para que quepan todos los botones
         ),
         itemCount: gridItems.length,
         itemBuilder: (_, i) => ProductCard(item: gridItems[i]),
@@ -352,7 +356,6 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Nombre del producto
                   Text(
@@ -365,20 +368,25 @@ class ProductCard extends StatelessWidget {
                       color: isDark ? Colors.white : AppColors.primaryTextLight,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 4),
                   // Descripción
-                  Text(
-                    item.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.text(
-                      fontSize: 10,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.6)
-                          : AppColors.secondaryTextLight,
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        item.description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.text(
+                          fontSize: 10,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.6)
+                              : AppColors.secondaryTextLight,
+                        ),
+                      ),
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 4),
                   // Sección de precios: variantes de tamaño para pizzas, precio simple para el resto
                   if (item.sizeVariants.isNotEmpty)
                     _buildSizeVariants(context, isDark)
@@ -436,6 +444,18 @@ class ProductCard extends StatelessWidget {
                   color: isDark ? Colors.white : AppColors.primaryTextLight,
                 ),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 6),
+              // Botón individual de agregar para esta variante
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: ButtonCard(
+                  text: "Añadir", // Texto más corto para que quepa bien en las variantes
+                  height: 24,
+                  fontSize: 9,
+                  borderRadius: 4,
+                  onPressed: () {},
+                ),
               ),
             ],
           ),
