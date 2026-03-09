@@ -1,0 +1,2310 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Authenticates a user and returns a JWT token.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully logged in and token generated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid credentials."
+          }
+        },
+        "summary": "Login user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "description": "Registers a new user with Guest role.",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request."
+          }
+        },
+        "summary": "Register new user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/roles": {
+      "post": {
+        "description": "Creates a new role.",
+        "operationId": "RolesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The role has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create role",
+        "tags": [
+          "Roles"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all roles.",
+        "operationId": "RolesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of roles.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Role"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all roles",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/roles/{id}": {
+      "get": {
+        "description": "Retrieves a single role by ID.",
+        "operationId": "RolesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The role found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role not found."
+          }
+        },
+        "summary": "Get role by ID",
+        "tags": [
+          "Roles"
+        ]
+      },
+      "patch": {
+        "description": "Updates a role by ID.",
+        "operationId": "RolesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The role has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Role not found."
+          }
+        },
+        "summary": "Update role",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/roles/{id}/deactivate": {
+      "patch": {
+        "description": "Deactivates a role by ID.",
+        "operationId": "RolesController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The role has been successfully deactivated."
+          },
+          "404": {
+            "description": "Role not found."
+          }
+        },
+        "summary": "Deactivate role",
+        "tags": [
+          "Roles"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "description": "Creates a new user. Requires Super Admin or Admin role.",
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The user has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request."
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          }
+        },
+        "summary": "Create user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all users.",
+        "operationId": "UsersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "summary": "Get all users",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Retrieves a single user by ID.",
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Get user by ID",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "description": "Updates a user by ID.",
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Update user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}/deactivate": {
+      "patch": {
+        "description": "Deactivates a user by ID.",
+        "operationId": "UsersController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user has been successfully deactivated."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Deactivate user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/products": {
+      "post": {
+        "description": "Creates a new product.",
+        "operationId": "ProductsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The product has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create product",
+        "tags": [
+          "Products"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all products.",
+        "operationId": "ProductsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of products.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all products",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products/{term}": {
+      "get": {
+        "description": "Retrieves a single product by ID or term.",
+        "operationId": "ProductsController_findOne",
+        "parameters": [
+          {
+            "name": "term",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found."
+          }
+        },
+        "summary": "Get product by term",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products/{id}": {
+      "patch": {
+        "description": "Updates a product by ID.",
+        "operationId": "ProductsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The product has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found."
+          }
+        },
+        "summary": "Update product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products/{id}/deactivate": {
+      "patch": {
+        "description": "Deactivates a product by ID.",
+        "operationId": "ProductsController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product has been successfully deactivated."
+          },
+          "404": {
+            "description": "Product not found."
+          }
+        },
+        "summary": "Deactivate product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/restaurants": {
+      "post": {
+        "description": "Creates a new restaurant. Requires Super Admin role.",
+        "operationId": "RestaurantsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRestaurantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The restaurant has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin role."
+          }
+        },
+        "summary": "Create restaurant",
+        "tags": [
+          "Restaurants"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all restaurants.",
+        "operationId": "RestaurantsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of restaurants.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Restaurant"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all restaurants",
+        "tags": [
+          "Restaurants"
+        ]
+      }
+    },
+    "/restaurants/{id}": {
+      "get": {
+        "description": "Retrieves a single restaurant by ID.",
+        "operationId": "RestaurantsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The restaurant found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurant not found."
+          }
+        },
+        "summary": "Get restaurant by ID",
+        "tags": [
+          "Restaurants"
+        ]
+      },
+      "patch": {
+        "description": "Updates a restaurant by ID. Requires Super Admin or Admin role.",
+        "operationId": "RestaurantsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRestaurantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The restaurant has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          },
+          "404": {
+            "description": "Restaurant not found."
+          }
+        },
+        "summary": "Update restaurant",
+        "tags": [
+          "Restaurants"
+        ]
+      }
+    },
+    "/restaurants/{id}/deactivate": {
+      "patch": {
+        "description": "Deactivates a restaurant by ID. Requires Super Admin role.",
+        "operationId": "RestaurantsController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The restaurant has been successfully deactivated."
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin role."
+          },
+          "404": {
+            "description": "Restaurant not found."
+          }
+        },
+        "summary": "Deactivate restaurant",
+        "tags": [
+          "Restaurants"
+        ]
+      }
+    },
+    "/tables": {
+      "post": {
+        "description": "Creates a new table. Requires Super Admin or Admin role.",
+        "operationId": "TablesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTableDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The table has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Table"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          }
+        },
+        "summary": "Create table",
+        "tags": [
+          "Tables"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all tables, optionally filtered by restaurant ID.",
+        "operationId": "TablesController_findAll",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tables.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Table"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all tables",
+        "tags": [
+          "Tables"
+        ]
+      }
+    },
+    "/tables/{id}": {
+      "get": {
+        "description": "Retrieves a single table by ID.",
+        "operationId": "TablesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The table found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Table"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Table not found."
+          }
+        },
+        "summary": "Get table by ID",
+        "tags": [
+          "Tables"
+        ]
+      },
+      "patch": {
+        "description": "Updates a table by ID. Requires Super Admin or Admin role.",
+        "operationId": "TablesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTableDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The table has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Table"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          },
+          "404": {
+            "description": "Table not found."
+          }
+        },
+        "summary": "Update table",
+        "tags": [
+          "Tables"
+        ]
+      }
+    },
+    "/tables/{id}/deactivate": {
+      "patch": {
+        "description": "Deactivates a table by ID. Requires Super Admin or Admin role.",
+        "operationId": "TablesController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The table has been successfully deactivated."
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          },
+          "404": {
+            "description": "Table not found."
+          }
+        },
+        "summary": "Deactivate table",
+        "tags": [
+          "Tables"
+        ]
+      }
+    },
+    "/sales": {
+      "post": {
+        "description": "Creates a new empty sale (or with items if provided).",
+        "operationId": "SalesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSaleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The sale has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a new sale",
+        "tags": [
+          "Sales"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all sales.",
+        "operationId": "SalesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of sales.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sale"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all sales",
+        "tags": [
+          "Sales"
+        ]
+      }
+    },
+    "/sales/{id}/items": {
+      "post": {
+        "description": "Adds new products/details to an open sale.",
+        "operationId": "SalesController_addItems",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddItemsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The items have been added successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found."
+          }
+        },
+        "summary": "Add items to sale",
+        "tags": [
+          "Sales"
+        ]
+      }
+    },
+    "/sales/{id}/close": {
+      "patch": {
+        "description": "Changes the status of a sale to CLOSED and assigns payment method.",
+        "operationId": "SalesController_close",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseSaleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The sale has been successfully closed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found."
+          }
+        },
+        "summary": "Close sale",
+        "tags": [
+          "Sales"
+        ]
+      }
+    },
+    "/sales/{id}/status": {
+      "patch": {
+        "description": "Updates the status of a sale (e.g., COMMANDED, IN_PROGRESS, READY).",
+        "operationId": "SalesController_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSaleStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The sale status has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found."
+          }
+        },
+        "summary": "Update sale status",
+        "tags": [
+          "Sales"
+        ]
+      }
+    },
+    "/sales/{id}": {
+      "get": {
+        "description": "Retrieves a single sale by ID.",
+        "operationId": "SalesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The sale found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sale"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found."
+          }
+        },
+        "summary": "Get a sale by ID",
+        "tags": [
+          "Sales"
+        ]
+      }
+    },
+    "/payment-methods": {
+      "post": {
+        "description": "Creates a new payment method. Requires Super Admin or Admin role.",
+        "operationId": "PaymentMethodsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentMethodDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The payment method has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          }
+        },
+        "summary": "Create payment method",
+        "tags": [
+          "Payment Methods"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all payment methods.",
+        "operationId": "PaymentMethodsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of payment methods.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentMethod"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all payment methods",
+        "tags": [
+          "Payment Methods"
+        ]
+      }
+    },
+    "/payment-methods/{id}": {
+      "get": {
+        "description": "Retrieves a single payment method by ID.",
+        "operationId": "PaymentMethodsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The payment method found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Payment method not found."
+          }
+        },
+        "summary": "Get payment method by ID",
+        "tags": [
+          "Payment Methods"
+        ]
+      },
+      "patch": {
+        "description": "Updates a payment method by ID. Requires Super Admin or Admin role.",
+        "operationId": "PaymentMethodsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentMethodDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The payment method has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          },
+          "404": {
+            "description": "Payment method not found."
+          }
+        },
+        "summary": "Update payment method",
+        "tags": [
+          "Payment Methods"
+        ]
+      }
+    },
+    "/terminals": {
+      "post": {
+        "description": "Creates a new terminal. Requires Super Admin or Admin role.",
+        "operationId": "TerminalsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTerminalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The terminal has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Terminal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          }
+        },
+        "summary": "Create terminal",
+        "tags": [
+          "Terminals"
+        ]
+      },
+      "get": {
+        "description": "Retrieves a list of all terminals.",
+        "operationId": "TerminalsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of terminals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Terminal"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all terminals",
+        "tags": [
+          "Terminals"
+        ]
+      }
+    },
+    "/terminals/{id}": {
+      "get": {
+        "description": "Retrieves a single terminal by ID.",
+        "operationId": "TerminalsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The terminal found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Terminal"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Terminal not found."
+          }
+        },
+        "summary": "Get terminal by ID",
+        "tags": [
+          "Terminals"
+        ]
+      },
+      "patch": {
+        "description": "Updates a terminal by ID. Requires Super Admin or Admin role.",
+        "operationId": "TerminalsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTerminalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The terminal has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Terminal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Requires Super Admin or Admin role."
+          },
+          "404": {
+            "description": "Terminal not found."
+          }
+        },
+        "summary": "Update terminal",
+        "tags": [
+          "Terminals"
+        ]
+      }
+    },
+    "/seed": {
+      "get": {
+        "operationId": "SeedController_executeSeed",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Seed"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Fiumicello API",
+    "description": "The Fiumicello API description",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "The email of the user"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "The password of the user",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "JWT Access Token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5c..."
+          }
+        },
+        "required": [
+          "access_token"
+        ]
+      },
+      "RegisterUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Milan",
+            "description": "The first name of the user"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Grisano",
+            "description": "The last name of the user"
+          },
+          "email": {
+            "type": "string",
+            "example": "milan@example.com",
+            "description": "The email of the user"
+          },
+          "password": {
+            "type": "string",
+            "example": "securePass123",
+            "description": "The password of the user",
+            "minLength": 6
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890",
+            "description": "The phone number of the user"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password"
+        ]
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the role",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the role",
+            "example": "Admin"
+          },
+          "description": {
+            "type": "string",
+            "description": "A brief description of the role",
+            "example": "System administrator"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the role is active or not",
+            "default": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "isActive"
+        ]
+      },
+      "Table": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the table",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "The name or label of the table",
+            "example": "Mesa 1"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the table is active",
+            "default": true
+          },
+          "restaurant": {
+            "description": "The restaurant this table belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Restaurant"
+              }
+            ]
+          },
+          "user": {
+            "description": "The waiter assigned to this table",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/User"
+              }
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "isActive",
+          "restaurant",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Restaurant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique UUID of the restaurant"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the restaurant",
+            "example": "Fiumicello Centro"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the restaurant is located",
+            "example": "Madrid"
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of the restaurant",
+            "example": "Calle Mayor 1"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the restaurant is active",
+            "default": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          },
+          "tables": {
+            "description": "Tables in the restaurant",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Table"
+            }
+          },
+          "users": {
+            "description": "Users (staff) assigned to the restaurant",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "city",
+          "isActive",
+          "createdAt",
+          "updatedAt",
+          "tables",
+          "users"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique UUID of the user"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User last name",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email address",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password (hashed)"
+          },
+          "phone": {
+            "type": "string",
+            "description": "User phone number",
+            "example": "+1234567890"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the user is active",
+            "default": true
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "description": "Whether the user email is verified",
+            "default": false
+          },
+          "isPhoneVerified": {
+            "type": "boolean",
+            "description": "Whether the user phone is verified",
+            "default": false
+          },
+          "emailVerificationCode": {
+            "type": "string",
+            "description": "Verification code for email"
+          },
+          "phoneVerificationCode": {
+            "type": "string",
+            "description": "Verification code for phone"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          },
+          "role": {
+            "description": "Role of the user",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ]
+          },
+          "sales": {
+            "description": "Sales made by the user",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sale"
+            }
+          },
+          "restaurant": {
+            "description": "Restaurant the user belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Restaurant"
+              }
+            ]
+          },
+          "tables": {
+            "description": "Tables assigned to the user",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Table"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "isActive",
+          "isEmailVerified",
+          "isPhoneVerified",
+          "createdAt",
+          "updatedAt",
+          "role",
+          "sales",
+          "tables"
+        ]
+      },
+      "Terminal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the terminal",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "The name or label of the terminal",
+            "example": "Caja 1"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the terminal is active",
+            "default": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          },
+          "sales": {
+            "description": "Sales processed through this terminal",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sale"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "isActive",
+          "createdAt",
+          "updatedAt",
+          "sales"
+        ]
+      },
+      "PaymentMethod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the payment method",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the payment method",
+            "example": "Credit Card"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the payment method is active",
+            "default": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          },
+          "sales": {
+            "description": "Sales using this payment method",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sale"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "isActive",
+          "createdAt",
+          "updatedAt",
+          "sales"
+        ]
+      },
+      "SaleDetail": {
+        "type": "object",
+        "properties": {}
+      },
+      "Sale": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique UUID of the sale"
+          },
+          "invoiceNumber": {
+            "type": "number",
+            "description": "Sequential invoice number",
+            "example": 1001
+          },
+          "total": {
+            "type": "number",
+            "description": "Total amount of the sale",
+            "example": 50.25
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the sale",
+            "enum": [
+              "OPEN",
+              "COMMANDED",
+              "IN_PROGRESS",
+              "READY",
+              "CLOSED",
+              "CANCELLED"
+            ],
+            "default": "OPEN"
+          },
+          "invoiceType": {
+            "type": "string",
+            "description": "Type of invoice (POS or Electronic)",
+            "enum": [
+              "POS",
+              "ELECTRONIC"
+            ]
+          },
+          "dinerName": {
+            "type": "string",
+            "description": "Name of the diner"
+          },
+          "dinerEmail": {
+            "type": "string",
+            "description": "Email of the diner"
+          },
+          "dinerPhone": {
+            "type": "string",
+            "description": "Phone of the diner"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          },
+          "user": {
+            "description": "User/waiter who created the sale",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/User"
+              }
+            ]
+          },
+          "terminal": {
+            "description": "Terminal used for the sale",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Terminal"
+              }
+            ]
+          },
+          "table": {
+            "description": "Table related to the sale",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Table"
+              }
+            ]
+          },
+          "restaurant": {
+            "description": "Restaurant to which the sale belongs",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Restaurant"
+              }
+            ]
+          },
+          "paymentMethod": {
+            "description": "Payment method used",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentMethod"
+              }
+            ]
+          },
+          "details": {
+            "description": "Details of the items in the sale",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleDetail"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "invoiceNumber",
+          "total",
+          "status",
+          "createdAt",
+          "updatedAt",
+          "user",
+          "restaurant",
+          "details"
+        ]
+      },
+      "CreateRoleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateRoleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "John",
+            "description": "The first name of the user"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe",
+            "description": "The last name of the user"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com",
+            "description": "The email of the user"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "The password of the user",
+            "minLength": 6
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890",
+            "description": "The phone number of the user"
+          },
+          "roleId": {
+            "type": "number",
+            "example": 1,
+            "description": "The role ID of the user"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether the user is active",
+            "default": true
+          },
+          "restaurantId": {
+            "type": "string",
+            "example": "uuid-restaurant-id",
+            "description": "The restaurant ID"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "John",
+            "description": "The first name of the user"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe",
+            "description": "The last name of the user"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@example.com",
+            "description": "The email of the user"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "The password of the user",
+            "minLength": 6
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1234567890",
+            "description": "The phone number of the user"
+          },
+          "roleId": {
+            "type": "number",
+            "example": 1,
+            "description": "The role ID of the user"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether the user is active",
+            "default": true
+          },
+          "restaurantId": {
+            "type": "string",
+            "example": "uuid-restaurant-id",
+            "description": "The restaurant ID"
+          }
+        }
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ProductImage": {
+        "type": "object",
+        "properties": {}
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique UUID of the product",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Target identifier/name of the product",
+            "example": "Pizza Margarita"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type or variant of the product (e.g., Grande, Mediana, Personal)",
+            "example": "Grande"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of the product",
+            "example": "Pizzas"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the product"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the product",
+            "example": 12.5
+          },
+          "availability": {
+            "type": "boolean",
+            "description": "Availability status of the product",
+            "default": true
+          },
+          "images": {
+            "description": "Images associated with the product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductImage"
+            }
+          },
+          "restaurants": {
+            "description": "Restaurants where this product is available",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Restaurant"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of creation"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of last update"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Active status",
+            "default": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "category",
+          "price",
+          "availability",
+          "restaurants",
+          "createdAt",
+          "updatedAt",
+          "isActive"
+        ]
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateRestaurantDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateRestaurantDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateTableDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateTableDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateSaleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "AddItemsDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CloseSaleDto": {
+        "type": "object",
+        "properties": {
+          "paymentMethodId": {
+            "type": "number",
+            "description": "ID of the payment method used"
+          },
+          "invoiceType": {
+            "type": "string",
+            "description": "Type of invoice the diner requested (POS or ELECTRONIC)",
+            "enum": [
+              "POS",
+              "ELECTRONIC"
+            ]
+          }
+        },
+        "required": [
+          "paymentMethodId",
+          "invoiceType"
+        ]
+      },
+      "UpdateSaleStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The new status of the sale/order",
+            "enum": [
+              "OPEN",
+              "COMMANDED",
+              "IN_PROGRESS",
+              "READY",
+              "CLOSED",
+              "CANCELLED"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "CreatePaymentMethodDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdatePaymentMethodDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateTerminalDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateTerminalDto": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  }
+}

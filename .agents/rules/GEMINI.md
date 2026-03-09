@@ -40,3 +40,6 @@ Debes tener en cuenta que cada panatalla que se muestra en la aplicacion debe te
 
 ## 6. Mock Data o contenido de texto de los widget
 - Todo los contenido de de texto de los widget seran concentrados en la carpeta content organizado en archivos para consumir todos los textos desde una unica carpeta.
+
+## 7. Integraciones API y Peticiones HTTP
+- NUNCA asumas la estructura de las peticiones HTTP o las respuestas del backend. Siempre que necesites construir, modificar o revisar una petición HTTP, DEBES descargar e inspeccionar primero la documentación de Swagger (ej. `http://localhost:3000/api/docs-json`) para confirmar los endpoints, schemas, y formatos exactos, garantizando así el éxito en la comunicación entre el frontend y el backend.

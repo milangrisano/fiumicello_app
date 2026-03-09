@@ -11,8 +11,9 @@ class AuthResponse {
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(
-      user: User.fromJson(json['user']),
-      token: json['token'] as String,
+      // Si el backend viene con 'user' anidado, lo usamos, si no usamos las propiedades raíz (por ej si sólo manda firstName, lastName, etc)
+      user: User.fromJson(json['user'] ?? json),
+      token: (json['token'] ?? json['access_token'] ?? '') as String,
     );
   }
 }

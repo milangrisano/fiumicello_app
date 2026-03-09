@@ -22,105 +22,108 @@ class CustomerInfoPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          // Back Button
-          _BackButton(),
-          const SizedBox(height: 24),
+            // Back Button
+            _BackButton(),
+            const SizedBox(height: 24),
 
-          // Title
-          Text(
-            ContentCustomerInfo.pageTitle,
-            style: AppTextStyles.text(
-              fontSize: 32,
-              weight: FontWeight.w600,
-              color: isDark ? AppColors.goldLightDark : AppColors.goldDark,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // Profile Card
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? AppColors.goldLightDark : AppColors.borderLight,
+            // Title
+            Text(
+              ContentCustomerInfo.pageTitle,
+              style: AppTextStyles.text(
+                fontSize: 32,
+                weight: FontWeight.w600,
+                color: isDark ? AppColors.goldLightDark : AppColors.goldDark,
               ),
             ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppColors.goldDark,
-                  backgroundImage:
-                      userPhoto != null ? NetworkImage(userPhoto) : null,
-                  child: userPhoto == null
-                      ? const Icon(Icons.person, size: 50, color: Colors.white)
-                      : null,
+            const SizedBox(height: 32),
+
+            // Profile Card
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color:
+                      isDark ? AppColors.goldLightDark : AppColors.borderLight,
                 ),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        userName,
-                        style: AppTextStyles.text(
-                          fontSize: 24,
-                          weight: FontWeight.bold,
-                          color: isDark
-                              ? Colors.white
-                              : AppColors.primaryTextLight,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        ContentCustomerInfo.editProfile,
-                        style: AppTextStyles.text(
-                          fontSize: 14,
-                          weight: FontWeight.w500,
-                          color: AppColors.goldDark,
-                        ),
-                      ),
-                    ],
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: AppColors.goldDark,
+                    backgroundImage:
+                        userPhoto != null ? NetworkImage(userPhoto) : null,
+                    child: userPhoto == null
+                        ? const Icon(Icons.person,
+                            size: 50, color: Colors.white)
+                        : null,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 24),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          userName,
+                          style: AppTextStyles.text(
+                            fontSize: 24,
+                            weight: FontWeight.bold,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.primaryTextLight,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          ContentCustomerInfo.editProfile,
+                          style: AppTextStyles.text(
+                            fontSize: 14,
+                            weight: FontWeight.w500,
+                            color: AppColors.goldDark,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          const SizedBox(height: 32),
+            const SizedBox(height: 32),
 
-          // Info Items
-          _InfoTile(
-            icon: Icons.email_outlined,
-            label: ContentCustomerInfo.emailLabel,
-            value: ContentCustomerInfo.defaultEmail,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 16),
-          _InfoTile(
-            icon: Icons.phone_outlined,
-            label: ContentCustomerInfo.phoneLabel,
-            value: ContentCustomerInfo.defaultPhone,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 16),
-          _InfoTile(
-            icon: Icons.location_on_outlined,
-            label: ContentCustomerInfo.addressLabel,
-            value: ContentCustomerInfo.defaultAddress,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 16),
-          _InfoTile(
-            icon: Icons.calendar_today_outlined,
-            label: ContentCustomerInfo.joinedDateLabel,
-            value: ContentCustomerInfo.defaultJoinedDate,
-            isDark: isDark,
-          ),
-        ],
-      ),
+            // Info Items
+            _InfoTile(
+              icon: Icons.email_outlined,
+              label: ContentCustomerInfo.emailLabel,
+              value: authProvider.currentUser?.email ??
+                  ContentCustomerInfo.defaultEmail,
+              isDark: isDark,
+            ),
+            const SizedBox(height: 16),
+            _InfoTile(
+              icon: Icons.phone_outlined,
+              label: ContentCustomerInfo.phoneLabel,
+              value: ContentCustomerInfo.defaultPhone,
+              isDark: isDark,
+            ),
+            const SizedBox(height: 16),
+            _InfoTile(
+              icon: Icons.location_on_outlined,
+              label: ContentCustomerInfo.addressLabel,
+              value: ContentCustomerInfo.defaultAddress,
+              isDark: isDark,
+            ),
+            const SizedBox(height: 16),
+            _InfoTile(
+              icon: Icons.calendar_today_outlined,
+              label: ContentCustomerInfo.joinedDateLabel,
+              value: ContentCustomerInfo.defaultJoinedDate,
+              isDark: isDark,
+            ),
+          ],
+        ),
       ),
     );
   }

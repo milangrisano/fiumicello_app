@@ -23,10 +23,11 @@ class AuthProvider extends ChangeNotifier {
   String? get token => _jwtToken;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  
+
   bool get isAuthenticated => _jwtToken != null;
   String? get userName => _currentUser?.name;
-  String? get userPhoto => null; // To-Do: add to User model if backend supports it
+  String? get userPhoto =>
+      null; // To-Do: add to User model if backend supports it
 
   Future<void> _checkAuthStatus() async {
     _isLoading = true;
@@ -59,9 +60,9 @@ class AuthProvider extends ChangeNotifier {
       final response = await _authService.login(email, password);
       _currentUser = response.user;
       _jwtToken = response.token;
-      
+
       await _persistSession();
-      
+
       log('AuthProvider: Login exitoso para ${_currentUser!.email}');
       return true;
     } catch (e) {
@@ -83,9 +84,9 @@ class AuthProvider extends ChangeNotifier {
       final response = await _authService.register(name, email, password);
       _currentUser = response.user;
       _jwtToken = response.token;
-      
+
       await _persistSession();
-      
+
       log('AuthProvider: Registro exitoso para ${_currentUser!.email}');
       return true;
     } catch (e) {
@@ -106,13 +107,61 @@ class AuthProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('token');
       await prefs.remove('user');
-      
+
       _currentUser = null;
       _jwtToken = null;
-      
+
       log('AuthProvider: Logout exitoso');
     } catch (e) {
       log('AuthProvider: Error durante logout -> $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> sendVerificationCode(String email) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.sendVerificationCode(email);
+      return true;
+    } catch (e) {
+      log('AuthProvider: Error al enviar código -> $e');
+      _error = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> verifyEmailCode(String email, String code) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.verifyEmailCode(email, code);
+      if (_currentUser != null) {
+        // Update the local instance as verified
+        _currentUser = User(
+          id: _currentUser!.id,
+          email: _currentUser!.email,
+          name: _currentUser!.name,
+          isActive: _currentUser!.isActive,
+          isEmailVerified: true,
+          roles: _currentUser!.roles,
+        );
+        await _persistSession();
+      }
+      return true;
+    } catch (e) {
+      log('AuthProvider: Error al verificar código -> $e');
+      _error = e.toString().replaceAll('Exception: ', '');
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

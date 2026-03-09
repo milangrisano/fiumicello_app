@@ -5,6 +5,7 @@ import 'package:responsive_app/content/content_landing.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:responsive_app/shared/fiumicello_loading_indicator.dart';
 import 'package:responsive_app/provider/auth_provider.dart';
+import 'package:responsive_app/shared/email_verification_modal.dart';
 
 // ─────────────────────────────────────────
 // Create Account Modal
@@ -48,6 +49,7 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
       _error = null;
     });
 
+    // Realizar el registro
     final success = await AuthProvider.instance.register(
       _nameCtrl.text.trim(),
       _emailCtrl.text.trim(),
@@ -56,7 +58,23 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
 
     if (mounted) {
       if (success) {
-        widget.onSuccess();
+        // Enviar el código de verificación inicialmente
+        await AuthProvider.instance
+            .sendVerificationCode(_emailCtrl.text.trim());
+
+        final rootContext = Navigator.of(context).overlay!.context;
+        // Cerrar el modal actual de registro
+        Navigator.of(context).pop();
+
+        // Mostrar el modal de verificación
+        showDialog(
+          context: rootContext,
+          barrierDismissible: false,
+          builder: (_) => EmailVerificationModal(
+            email: _emailCtrl.text.trim(),
+            onSuccess: widget.onSuccess,
+          ),
+        );
       } else {
         setState(() {
           _loading = false;
@@ -121,8 +139,7 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                     style: AppTextStyles.text(
                       fontSize: 22,
                       weight: FontWeight.w600,
-                      color:
-                          isDark ? Colors.white : AppColors.primaryTextLight,
+                      color: isDark ? Colors.white : AppColors.primaryTextLight,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -186,9 +203,8 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                           _obscurePass
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: isDark
-                              ? AppColors.hintDark
-                              : AppColors.hintLight,
+                          color:
+                              isDark ? AppColors.hintDark : AppColors.hintLight,
                           size: 18,
                         ),
                         onPressed: () =>
@@ -211,16 +227,15 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
                         fontSize: 14,
                         color:
                             isDark ? Colors.white : AppColors.primaryTextLight),
-                    decoration: _field(LandingStrings.confirmPassHint, isDark)
-                        .copyWith(
+                    decoration:
+                        _field(LandingStrings.confirmPassHint, isDark).copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscureConfirmPass
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: isDark
-                              ? AppColors.hintDark
-                              : AppColors.hintLight,
+                          color:
+                              isDark ? AppColors.hintDark : AppColors.hintLight,
                           size: 18,
                         ),
                         onPressed: () => setState(
