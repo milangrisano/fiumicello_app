@@ -62,9 +62,13 @@ class _CreateAccountModalState extends State<CreateAccountModal> {
         await AuthProvider.instance
             .sendVerificationCode(_emailCtrl.text.trim());
 
+        if (!mounted) return;
+
         final rootContext = Navigator.of(context).overlay!.context;
         // Cerrar el modal actual de registro
         Navigator.of(context).pop();
+
+        if (!rootContext.mounted) return;
 
         // Mostrar el modal de verificación
         showDialog(

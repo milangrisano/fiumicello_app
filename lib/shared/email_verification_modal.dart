@@ -146,9 +146,10 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
           padding: const EdgeInsets.fromLTRB(36, 38, 36, 32),
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                 // ── Fiumicello Logo ──
                 Image.asset(
                   isDark
@@ -307,20 +308,25 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: _loading ? null : _resendCode,
-                      child: Text(
-                        'Reenviar Código',
-                        style: AppTextStyles.text(
-                          fontSize: 14,
-                          color: AppColors.goldLightDark,
-                          weight: FontWeight.w600,
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.goldLightDark,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        child: Text(
+                          'Reenviar Código',
+                          style: AppTextStyles.text(
+                            fontSize: 14,
+                            color: AppColors.goldLightDark,
+                            weight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.goldLightDark,
+                          ),
                         ),
                       ),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
