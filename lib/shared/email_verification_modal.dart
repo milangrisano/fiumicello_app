@@ -28,7 +28,7 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
   String? _error;
 
   Timer? _countdownTimer;
-  int _secondsRemaining = 180; // 3 minutes
+  int _secondsRemaining = 60; // 1 minute
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
 
   void _startTimer() {
     setState(() {
-      _secondsRemaining = 180;
+      _secondsRemaining = 60;
       _error = null;
     });
 
