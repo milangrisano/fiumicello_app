@@ -95,4 +95,43 @@ class AuthService {
       throw Exception('Error de conexión al verificar código: $e');
     }
   }
+
+  Future<void> sendPasswordResetCode(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/auth/send-password-reset-code'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email}),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final body = json.decode(response.body);
+        throw Exception(body['message'] ?? 'Error al enviar el código de recuperación');
+      }
+    } catch (e) {
+      throw Exception('Error de conexión al solicitar código de recuperación: $e');
+    }
+  }
+
+  Future<void> resetPassword(String email, String code, String newPassword) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/auth/reset-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': email,
+          'code': code,
+          'newPassword': newPassword,
+        }),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final body = json.decode(response.body);
+        throw Exception(body['message'] ?? 'Código inválido o expirado');
+      }
+    } catch (e) {
+      throw Exception('Error de conexión al restablecer contraseña: $e');
+    }
+  }
 }
+

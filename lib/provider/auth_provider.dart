@@ -174,4 +174,41 @@ class AuthProvider extends ChangeNotifier {
     await prefs.setString('token', _jwtToken!);
     await prefs.setString('user', json.encode(_currentUser!.toJson()));
   }
+
+  Future<bool> sendPasswordResetCode(String email) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.sendPasswordResetCode(email);
+      return true;
+    } catch (e) {
+      log('AuthProvider: Error al enviar código de recuperación -> $e');
+      _error = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword(String email, String code, String newPassword) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.resetPassword(email, code, newPassword);
+      return true;
+    } catch (e) {
+      log('AuthProvider: Error al restablecer contraseña -> $e');
+      _error = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
+

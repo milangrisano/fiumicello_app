@@ -6,6 +6,9 @@ import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:responsive_app/shared/fiumicello_loading_indicator.dart';
 import 'package:responsive_app/provider/auth_provider.dart';
 import 'package:responsive_app/shared/create_account_modal.dart';
+import 'package:responsive_app/shared/forgot_password_modal.dart';
+import 'package:responsive_app/shared/email_verification_modal.dart';
+import 'package:responsive_app/shared/new_password_modal.dart';
 
 class LoginModal extends StatefulWidget {
   final VoidCallback onSuccess;
@@ -57,6 +60,47 @@ class _LoginModalState extends State<LoginModal> {
     _emailCtrl.dispose();
     _passCtrl.dispose();
     super.dispose();
+  }
+
+  void _openForgotPassword(BuildContext rootContext) {
+    showDialog(
+      context: rootContext,
+      barrierColor: Colors.black54,
+      builder: (_) => ForgotPasswordModal(
+        onCodeSent: (email) {
+          Navigator.of(rootContext).pop();
+          showDialog(
+            context: rootContext,
+            barrierColor: Colors.black54,
+            builder: (_) => EmailVerificationModal(
+              email: email,
+              mode: 'reset',
+              onSuccess: () {}, // not used in reset mode
+              onCodeVerified: (code) {
+                Navigator.of(rootContext).pop();
+                showDialog(
+                  context: rootContext,
+                  barrierColor: Colors.black54,
+                  builder: (_) => NewPasswordModal(
+                    email: email,
+                    code: code,
+                    onSuccess: () {
+                      Navigator.of(rootContext).pop();
+                      showDialog(
+                        context: rootContext,
+                        barrierColor: Colors.black54,
+                        builder: (_) =>
+                            LoginModal(onSuccess: widget.onSuccess),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -166,6 +210,32 @@ class _LoginModalState extends State<LoginModal> {
                     ),
                   ),
                 ],
+
+                // ── Forgot Password link ──
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        final BuildContext rootContext =
+                            Navigator.of(context).overlay!.context;
+                        Navigator.of(context).pop();
+                        _openForgotPassword(rootContext);
+                      },
+                      child: Text(
+                        '¿Olvidaste tu contraseña?',
+                        style: AppTextStyles.text(
+                          fontSize: 12,
+                          color: AppColors.goldLightDark,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.goldLightDark,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
 
                 const SizedBox(height: 20),
 

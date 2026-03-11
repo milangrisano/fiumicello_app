@@ -10,10 +10,22 @@ class EmailVerificationModal extends StatefulWidget {
   final String email;
   final VoidCallback onSuccess;
 
+  /// 'register' (default) runs the full verify-code endpoint which marks
+  /// the email as verified in the DB.
+  /// 'reset' skips the endpoint and passes the code to [onCodeVerified]
+  /// so the reset-password endpoint can validate it atomically.
+  final String mode;
+
+  /// Only used when [mode] == 'reset'. Receives the raw code entered by the
+  /// user so the caller can open the NewPasswordModal with it.
+  final void Function(String code)? onCodeVerified;
+
   const EmailVerificationModal({
     super.key,
     required this.email,
     required this.onSuccess,
+    this.mode = 'register',
+    this.onCodeVerified,
   });
 
   @override
@@ -65,8 +77,11 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
       _error = null;
     });
 
-    final success =
-        await AuthProvider.instance.sendVerificationCode(widget.email);
+    // En modo 'reset' reenviamos el código de recuperación de contraseña.
+    // En modo 'register' reenviamos el código de verificación de email.
+    final success = widget.mode == 'reset'
+        ? await AuthProvider.instance.sendPasswordResetCode(widget.email)
+        : await AuthProvider.instance.sendVerificationCode(widget.email);
 
     if (mounted) {
       setState(() {
@@ -88,6 +103,15 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
       _loading = true;
       _error = null;
     });
+
+    if (widget.mode == 'reset') {
+      // In reset mode we don't call verify-code (which marks isEmailVerified).
+      // The code will be validated atomically inside reset-password.
+      if (mounted) {
+        widget.onCodeVerified?.call(_codeCtrl.text.trim());
+      }
+      return;
+    }
 
     final success = await AuthProvider.instance.verifyEmailCode(
       widget.email,
@@ -163,7 +187,9 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
 
                 // ── Title ──
                 Text(
-                  'Verificar Correo',
+                  widget.mode == 'reset'
+                      ? 'Verificar identidad'
+                      : 'Verificar Correo',
                   textAlign: TextAlign.center,
                   style: AppTextStyles.text(
                     fontSize: 22,
@@ -176,7 +202,9 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
 
                 // ── Instruction Text ──
                 Text(
-                  'Hemos enviado un código de 6 dígitos al correo:\n${widget.email}',
+                  widget.mode == 'reset'
+                      ? 'Enviamos un código de recuperación de 6 dígitos a:\n${widget.email}'
+                      : 'Hemos enviado un código de 6 dígitos al correo:\n${widget.email}',
                   textAlign: TextAlign.center,
                   style: AppTextStyles.text(
                     fontSize: 14,
@@ -283,7 +311,7 @@ class _EmailVerificationModalState extends State<EmailVerificationModal> {
                             height: 32,
                             child: FiumicelloLoadingIndicator(size: 26))
                         : Text(
-                            'Verificar',
+                            widget.mode == 'reset' ? 'Continuar' : 'Verificar',
                             style: AppTextStyles.text(
                               fontSize: 17,
                               weight: FontWeight.w600,
