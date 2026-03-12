@@ -7,6 +7,7 @@ import 'package:responsive_app/content/content_landing.dart'; // Solo para Landi
 import 'package:responsive_app/page/product_page/widget_product/contact_footer.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/cart_provider.dart';
+import 'package:responsive_app/shared/add_to_cart_animation.dart';
 
 // ─────────────────────────────────────────
 // Product Grid
@@ -238,18 +239,37 @@ class _ProductGridState extends State<ProductGrid> {
           );
         }),
       ),
-      GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 0.83, // Aumentado el espacio vertical para que quepan todos los botones
-        ),
-        itemCount: gridItems.length,
-        itemBuilder: (_, i) => ProductCard(item: gridItems[i]),
-      ),
+      LayoutBuilder(builder: (context, constraints) {
+        // Obtenemos el ancho dispponible para el grid
+        final availableWidth = constraints.maxWidth;
+        // Calculamos el ancho de cada item asumiendo 4 columnas y espaciado de 16
+        final itemWidth = (availableWidth - (16 * 3)) / 4;
+        
+        // La imagen usa un AspectRatio de 1.3 (Ancho / Alto). 
+        // Su altura será proporcional al ancho del elemento.
+        final imageHeight = itemWidth / 1.3;
+        
+        // El bloque de texto (título, descripción, precio, botón)
+        // necesita aproximadamente 190 pixeles de alto constantes para no cortarse.
+        const double textHeight = 190; 
+        
+        final itemHeight = imageHeight + textHeight;
+        
+        final dynamicAspectRatio = itemWidth / itemHeight;
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: dynamicAspectRatio,
+          ),
+          itemCount: gridItems.length,
+          itemBuilder: (_, i) => ProductCard(item: gridItems[i]),
+        );
+      }),
     ];
   }
 
@@ -283,9 +303,47 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
     required this.item,
-    this.imageFlex = 2,
-    this.textFlex = 1,
+    this.imageFlex = 1, // now unused, keep parameter so it doesn't break external calls
+    this.textFlex = 1,  // now unused
   });
+
+  void _triggerAddToCart(BuildContext context, VoidCallback action) {
+    // El Floating Action Button está posicionado en bottom: 24, right: 24 con tamaño 56x56 
+    final mediaQuery = MediaQuery.of(context);
+    final targetPosition = Offset(
+      mediaQuery.size.width - 24 - 56, // X 
+      mediaQuery.size.height - 24 - 56, // Y
+    );
+
+    AddToCartAnimation.run(
+      startContext: context, // Comienza desde donde está este card
+      targetPosition: targetPosition, // Termina donde está el botón flotante
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: item.imageUrl.isNotEmpty
+              ? Image.network(item.imageUrl, fit: BoxFit.cover)
+              : Container(
+                  color: item.plateColor.withValues(alpha: 0.18),
+                  child: Image.asset('assets/images/fiumicello_hat.png', fit: BoxFit.contain),
+                ),
+        ),
+      ),
+      onComplete: () {
+        action();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -309,9 +367,9 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagen
-          Expanded(
-            flex: imageFlex,
+          // Imagen - AspectRatio para mantener proporciones en vez de Flex
+          AspectRatio(
+            aspectRatio: 1.3, // Ancho / Alto de la imagen
             child: Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
               child: ClipRRect(
@@ -325,35 +383,27 @@ class ProductCard extends StatelessWidget {
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: item.plateColor.withValues(alpha: 0.18),
                         child: Center(
-                          child: Image.asset(
+                           child: Image.asset(
                             'assets/images/fiumicello_hat.png',
-                            width: 60.0 * imageFlex,
-                            height: 60.0 * imageFlex,
-                            fit: BoxFit.contain,
-                            // Optional: apply color if the hat is just a silhouette, 
-                            // filtering the color to match the design (uncomment if needed)
-                            // color: item.plateColor.withValues(alpha: 0.85),
-                          ),
+                             fit: BoxFit.contain,
+                           ),
                         ),
                       ),
                     )
                   : Container(
                       color: item.plateColor.withValues(alpha: 0.18),
                       child: Center(
-                        child: Image.asset(
+                         child: Image.asset(
                           'assets/images/fiumicello_hat.png',
-                          width: 60.0 * imageFlex,
-                          height: 60.0 * imageFlex,
-                          fit: BoxFit.contain,
-                        ),
+                           fit: BoxFit.contain,
+                         ),
                       ),
                     ),
               ),
             ),
           ),
-          // Textos
+          // Textos - El resto del Card toma lo que falta
           Expanded(
-            flex: textFlex,
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -371,13 +421,14 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // Descripción
+                  // Descripción - Usar solo el Expanded aquí garantiza que tome el espacio libre
+                  // sin empujar ni aplastar los precios abajo.
                   Expanded(
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
                         item.description,
-                        maxLines: 3,
+                        maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.text(
                           fontSize: 10,
@@ -402,11 +453,16 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    ButtonCard(
-                      text: LandingStrings.btnAddToCart,
-                      onPressed: () {
-                        context.read<CartProvider>().addItem(item);
-                      },
+                    SizedBox(
+                      width: double.infinity, // El botón "Añadir a comprar" toma todo el ancho
+                      child: ButtonCard(
+                        text: LandingStrings.btnAddToCart,
+                        onPressed: () {
+                          _triggerAddToCart(context, () {
+                            context.read<CartProvider>().addItem(item);
+                          });
+                        },
+                      ),
                     ),
                   ],
                 ],
@@ -459,11 +515,13 @@ class ProductCard extends StatelessWidget {
                   fontSize: 9,
                   borderRadius: 4,
                   onPressed: () {
-                    context.read<CartProvider>().addItem(
-                      item,
-                      selectedSize: entry.key,
-                      specificPrice: entry.value,
-                    );
+                    _triggerAddToCart(context, () {
+                      context.read<CartProvider>().addItem(
+                        item,
+                        selectedSize: entry.key,
+                        specificPrice: entry.value,
+                      );
+                    });
                   },
                 ),
               ),

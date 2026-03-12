@@ -8,6 +8,7 @@ import 'package:responsive_app/configure/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/cart_provider.dart';
+import 'package:responsive_app/provider/auth_provider.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -23,11 +24,10 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = context.watch<CartProvider>();
+    final authProvider = context.watch<AuthProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -73,38 +73,54 @@ class _CartPageState extends State<CartPage> {
             ),
           ),
           const SizedBox(height: 24),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                flex: 1,
-                child: ListTileProduct(
-                  items: cartProvider.items,
-                  onIncrement: cartProvider.incrementQuantity,
-                  onDecrement: cartProvider.decrementQuantity,
-                  onRemove: cartProvider.removeItem,
-                ),
-              ),
-              const SizedBox(width: 32),
-              Flexible(
-                flex: 1,
-                child: Column(
-                  children: [
-                    OrderSummary(
-                        subtotal: cartProvider.subtotal,
-                        tax: cartProvider.tax,
-                        delivery: cartProvider.delivery,
-                        total: cartProvider.total),
-                    const SizedBox(height: 24),
-                    PaymentMethod(
-                      selectedValue: _selectedPaymentMethod,
-                      onChanged: (val) =>
-                          setState(() => _selectedPaymentMethod = val ?? 0),
+          // Usamos Expanded para que ocupe todo el espacio disponible hacia abajo
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Columna izquierda: Scrollable (Lista de productos)
+                Expanded(
+                  flex: 3,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: ListTileProduct(
+                        items: cartProvider.items,
+                        onIncrement: cartProvider.incrementQuantity,
+                        onDecrement: cartProvider.decrementQuantity,
+                        onRemove: cartProvider.removeItem,
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 32),
+                // Columna derecha: Fija (Resumen de orden y método de pago)
+                Expanded(
+                  flex: 2,
+                  child: SingleChildScrollView(
+                    // Le ponemos scroll tbién a la derecha por si la pantalla es muy pequeña a lo alto,
+                    // pero normalmente se verá fija sin necesidad de moverla.
+                    child: Column(
+                      children: [
+                        OrderSummary(
+                            subtotal: cartProvider.subtotal,
+                            tax: cartProvider.tax,
+                            delivery: cartProvider.delivery,
+                            total: cartProvider.total),
+                        if (authProvider.isAuthenticated) ...[
+                          const SizedBox(height: 24),
+                          PaymentMethod(
+                            selectedValue: _selectedPaymentMethod,
+                            onChanged: (val) =>
+                                setState(() => _selectedPaymentMethod = val ?? 0),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

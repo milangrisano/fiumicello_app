@@ -261,6 +261,7 @@ class _AnimatedCartFab extends StatefulWidget {
   final int itemCount;
 
   const _AnimatedCartFab({
+    super.key,
     required this.onPressed,
     required this.itemCount,
   });
@@ -277,13 +278,24 @@ class _AnimatedCartFabState extends State<_AnimatedCartFab> with SingleTickerPro
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      // Aumentamos ligeramente la duración para que se note más el efecto
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
+    
+    // Hacemos la secuencia más exagerada y con un rebote (bounceOut) al final
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.5), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: 1.5, end: 1.0), weight: 1),
-    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.4)
+            .chain(CurveTween(curve: Curves.easeOutCubic)),
+        weight: 40.0,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.4, end: 1.0)
+            .chain(CurveTween(curve: Curves.bounceOut)),
+        weight: 60.0,
+      ),
+    ]).animate(_controller);
   }
 
   @override
