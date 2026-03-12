@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:responsive_app/content/content_landing.dart';
 import 'package:responsive_app/configure/app_colors.dart';
 import 'package:responsive_app/configure/app_text_styles.dart';
+import 'package:intl/intl.dart';
 
 class OrderSummary extends StatelessWidget {
   final double subtotal;
@@ -19,6 +20,10 @@ class OrderSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Formatter sin símbolo y sin decimales
+    final numberFormat = NumberFormat.currency(locale: 'es_CO', symbol: '', decimalDigits: 0);
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
@@ -40,14 +45,14 @@ class OrderSummary extends StatelessWidget {
           const SizedBox(height: 20),
           _SummaryRow(
               title: LandingStrings.subtotal,
-              value: '\$${subtotal.toStringAsFixed(2)}'),
+              value: numberFormat.format(subtotal).trim()),
           const SizedBox(height: 12),
           _SummaryRow(
-              title: LandingStrings.tax, value: '\$${tax.toStringAsFixed(2)}'),
+              title: LandingStrings.tax, value: numberFormat.format(tax).trim()),
           const SizedBox(height: 12),
           _SummaryRow(
               title: LandingStrings.delivery,
-              value: '\$${delivery.toStringAsFixed(2)}'),
+              value: numberFormat.format(delivery).trim()),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(color: Colors.black12, height: 1),
@@ -64,7 +69,7 @@ class OrderSummary extends StatelessWidget {
                         : AppColors.primaryTextLight),
               ),
               Text(
-                '\$${total.toStringAsFixed(2)}',
+                numberFormat.format(total).trim(),
                 style: AppTextStyles.bold(
                     fontSize: 20,
                     color: isDark

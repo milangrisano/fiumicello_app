@@ -54,12 +54,39 @@ class ListTileProduct extends StatelessWidget {
               // Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  product.imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
+                child: product.imageUrl.isNotEmpty
+                    ? Image.network(
+                        product.imageUrl,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 100,
+                          height: 100,
+                          color: product.plateColor.withValues(alpha: 0.18),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/fiumicello_hat.png',
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 100,
+                        height: 100,
+                        color: product.plateColor.withValues(alpha: 0.18),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/fiumicello_hat.png',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
               ),
               const SizedBox(width: 16),
               // Details
@@ -74,6 +101,16 @@ class ListTileProduct extends StatelessWidget {
                           fontSize: 18,
                           color: isDark ? Colors.white : Colors.black87),
                     ),
+                    if (item.selectedSize != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'Tamaño: ${item.selectedSize}',
+                        style: AppTextStyles.w500(
+                          fontSize: 13,
+                          color: AppColors.goldDark,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 6),
                     Text(
                       product.description,
@@ -85,7 +122,7 @@ class ListTileProduct extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      product.price,
+                      item.specificPrice ?? product.price,
                       style: AppTextStyles.bold(
                           fontSize: 16,
                           color: isDark ? Colors.white : Colors.black87),

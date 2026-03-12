@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:responsive_app/models/landing_menu_item.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/products_provider.dart';
+import 'package:responsive_app/provider/cart_provider.dart';
 import 'package:responsive_app/models/product.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_app/shared/fiumicello_loading_indicator.dart';
@@ -241,18 +242,89 @@ class _LandingPageState extends State<LandingPage> {
           Positioned(
             bottom: 24,
             right: 24,
-            child: FloatingActionButton(
-              heroTag: 'cart_fab',
-              backgroundColor: AppColors.primaryTextLight,
-              foregroundColor: AppColors.goldDark,
-              onPressed: () {
-                context.go('/cart');
-              },
-              child: const Icon(Icons.shopping_cart_outlined),
+            child: _AnimatedCartFab(
+              onPressed: () => context.go('/cart'),
+              itemCount: context.watch<CartProvider>().totalItems,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// Animated Cart FAB
+// ─────────────────────────────────────────
+class _AnimatedCartFab extends StatefulWidget {
+  final VoidCallback onPressed;
+  final int itemCount;
+
+  const _AnimatedCartFab({
+    required this.onPressed,
+    required this.itemCount,
+  });
+
+  @override
+  State<_AnimatedCartFab> createState() => _AnimatedCartFabState();
+}
+
+class _AnimatedCartFabState extends State<_AnimatedCartFab> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.5), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 1.5, end: 1.0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void didUpdateWidget(covariant _AnimatedCartFab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Disparar animación si la cantidad de items aumenta
+    if (widget.itemCount > oldWidget.itemCount) {
+      _controller.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: FloatingActionButton(
+            heroTag: 'cart_fab',
+            backgroundColor: AppColors.primaryTextLight,
+            foregroundColor: AppColors.goldDark,
+            onPressed: widget.onPressed,
+            child: Badge(
+              isLabelVisible: widget.itemCount > 0,
+              label: Text(
+                '${widget.itemCount}',
+                style: const TextStyle(color: AppColors.goldDark, fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: AppColors.buttonGreenLight,
+              child: const Icon(Icons.shopping_cart_outlined),
+            ),
+          ),
+        );
+      },
     );
   }
 }

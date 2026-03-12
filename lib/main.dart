@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_app/provider/theme_provider.dart';
 import 'package:responsive_app/provider/auth_provider.dart';
 import 'package:responsive_app/provider/products_provider.dart';
+import 'package:responsive_app/provider/cart_provider.dart';
 
 void main() {
   runApp(
@@ -14,6 +15,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: AuthProvider.instance),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: const MainApp(),
     ),

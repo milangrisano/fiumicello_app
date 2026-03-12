@@ -5,6 +5,8 @@ import 'package:responsive_app/shared/button_card.dart';
 import 'package:responsive_app/models/landing_menu_item.dart';
 import 'package:responsive_app/content/content_landing.dart'; // Solo para LandingStrings
 import 'package:responsive_app/page/product_page/widget_product/contact_footer.dart';
+import 'package:provider/provider.dart';
+import 'package:responsive_app/provider/cart_provider.dart';
 
 // ─────────────────────────────────────────
 // Product Grid
@@ -315,27 +317,12 @@ class ProductCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: item.imageUrl.isNotEmpty
-                    ? Image.network(
-                        item.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: item.plateColor.withValues(alpha: 0.18),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/fiumicello_hat.png',
-                              width: 60.0 * imageFlex,
-                              height: 60.0 * imageFlex,
-                              fit: BoxFit.contain,
-                              // Optional: apply color if the hat is just a silhouette, 
-                              // filtering the color to match the design (uncomment if needed)
-                              // color: item.plateColor.withValues(alpha: 0.85),
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(
+                  ? Image.network(
+                      item.imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (context, error, stackTrace) => Container(
                         color: item.plateColor.withValues(alpha: 0.18),
                         child: Center(
                           child: Image.asset(
@@ -343,9 +330,24 @@ class ProductCard extends StatelessWidget {
                             width: 60.0 * imageFlex,
                             height: 60.0 * imageFlex,
                             fit: BoxFit.contain,
+                            // Optional: apply color if the hat is just a silhouette, 
+                            // filtering the color to match the design (uncomment if needed)
+                            // color: item.plateColor.withValues(alpha: 0.85),
                           ),
                         ),
                       ),
+                    )
+                  : Container(
+                      color: item.plateColor.withValues(alpha: 0.18),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/fiumicello_hat.png',
+                          width: 60.0 * imageFlex,
+                          height: 60.0 * imageFlex,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
               ),
             ),
           ),
@@ -402,7 +404,9 @@ class ProductCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     ButtonCard(
                       text: LandingStrings.btnAddToCart,
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<CartProvider>().addItem(item);
+                      },
                     ),
                   ],
                 ],
@@ -454,7 +458,13 @@ class ProductCard extends StatelessWidget {
                   height: 24,
                   fontSize: 9,
                   borderRadius: 4,
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<CartProvider>().addItem(
+                      item,
+                      selectedSize: entry.key,
+                      specificPrice: entry.value,
+                    );
+                  },
                 ),
               ),
             ],
